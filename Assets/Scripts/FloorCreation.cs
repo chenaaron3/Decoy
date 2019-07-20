@@ -11,7 +11,7 @@ public class FloorCreation : MonoBehaviour
 
     private void Start()
     {
-        GenerateFloor();
+        GenerateLegitimateFloor();
     }
 
     private void Update()
