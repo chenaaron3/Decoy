@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TileGroup : MonoBehaviour
 {
+    public static int minLevel;
     public static HashSet<Vector2> centerPositions = new HashSet<Vector2>();
     public static HashSet<Vector2> bodyPositions = new HashSet<Vector2>();
     public static HashSet<Vector2> perimeterPositions = new HashSet<Vector2>();
@@ -17,6 +18,11 @@ public class TileGroup : MonoBehaviour
 
     public void Initialize(int length, int level, float spreadRate)
     {
+        if(level < minLevel)
+        {
+            minLevel = level;
+        }
+
         // set up tile identity
         AssignAttributes(length, level, spreadRate);
         CreateExtensions();

@@ -18,28 +18,39 @@ public class FloorCreation : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            ResetFloor();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            ColorFloor();
+            GenerateLegitimateFloor();
         }
     }
 
+    // Ensures that the generated floor is large
+    void GenerateLegitimateFloor()
+    {
+        // guarantee a level that has expected levels
+        do
+        {
+            ResetFloor();
+            Debug.Log("TRY!");
+        } while ((levels - TileGroup.minLevel) < (spreadRate * levels));
+    }
+
+    // Clears and Generates a floor
     void ResetFloor()
     {
         ClearFloor();
         GenerateFloor();
     }
 
+    // Generates a floor seed that spreads
     void GenerateFloor()
     {
+        TileGroup.minLevel = levels;
         GameObject seed = Instantiate(floorSeed, Vector3.zero, Quaternion.identity, transform);
         TileGroup tg = seed.GetComponent<TileGroup>();
         tg.Initialize(blockSize, levels, spreadRate);
         ColorFloor();
     }
 
+    // Clears the floor from model and view
     void ClearFloor()
     {
         TileGroup.bodyPositions.Clear();
@@ -51,6 +62,7 @@ public class FloorCreation : MonoBehaviour
         }
     }
 
+    // Colors the floor based on their properties
     void ColorFloor()
     {
         foreach(Vector2 perimeterPos in TileGroup.perimeterPositions)

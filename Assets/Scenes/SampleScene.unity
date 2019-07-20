@@ -225,9 +225,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorSeed: {fileID: 4949294844842869109, guid: 55e7d120f04fac74eacf4420823680dd,
     type: 3}
-  blockSize: 7
-  levels: 7
-  spreadRate: 0.7
+  blockSize: 3
+  levels: 25
+  spreadRate: 0.6
 --- !u!4 &726514799
 Transform:
   m_ObjectHideFlags: 0
