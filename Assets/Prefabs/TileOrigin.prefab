@@ -67,8 +67,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 189390397
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: dd05552281ce86746b587b585f681ed0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -97,8 +97,6 @@ MonoBehaviour:
   level: 0
   spreadRate: 0
   tileGroupPrefab: {fileID: 4949294844842869109}
-  visualizer: {fileID: 756391477612278720, guid: fe43d9b7463153643b686bf9fac6e205,
-    type: 3}
   tileMember: {fileID: 756391477612278720, guid: fe43d9b7463153643b686bf9fac6e205,
     type: 3}
 --- !u!61 &5542961964703254797

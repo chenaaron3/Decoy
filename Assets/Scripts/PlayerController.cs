@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
     // Instantiates a clone that dies after a duration
     void Clone()
     {
-        Destroy(Instantiate(clonePrefab, transform.position, Quaternion.identity), cloneDuration);
+        Instantiate(clonePrefab, transform.position, Quaternion.identity).GetComponent<Clone>().Die(cloneDuration);
         Dash(movingDirection);
     }
 
@@ -89,18 +89,20 @@ public class PlayerController : MonoBehaviour
     // Stops at a wall
     IEnumerator DashRoutine(Vector2 direction, float distance)
     {
+        StartCoroutine(FadeInTrailRenderer());
         stunned = true;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, 1 << LayerManager.TILE);
         Vector2 dest = hit ? hit.point - direction * size / 2 : (Vector2)transform.position + direction.normalized * distance;
-        Debug.Log("hit: " + (bool)(hit) + " From: " + transform.position + " To: " + dest);
         while ((Vector2)transform.position != dest)
         {
-            transform.position = Vector3.MoveTowards(transform.position, dest, speed * 2 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, dest, speed * 5 * Time.deltaTime);
             yield return new WaitForEndOfFrame();
         }
         stunned = false;
+        StartCoroutine(FadeOutTrailRenderer());
     }
 
+    // fades in tr
     IEnumerator FadeInTrailRenderer()
     {
         tr.enabled = true;
@@ -118,6 +120,7 @@ public class PlayerController : MonoBehaviour
         tr.startWidth = trailRendererWidth;
     }
 
+    // fades out tr
     IEnumerator FadeOutTrailRenderer()
     {
         float time = 0;
