@@ -121,12 +121,12 @@ public class TileGroup : MonoBehaviour
             for (int c = 0; c < length; c++)
             {
                 Vector2 pos = topLeft + new Vector2(r, -1 * c);
-                // if not an existing body tile
+                // if not an existing body tile (new territory)
                 if(!bodyPositions.Contains(pos))
                 {
                     impacted = true;
                     bodyPositions.Add(pos);
-                    // if overlapping a perimeter tile remove it
+                    // if overlapping a perimeter tile, it is no longer a perimeter tile
                     if (perimeterPositions.Contains(pos))
                     {
                         perimeterPositions.Remove(pos);

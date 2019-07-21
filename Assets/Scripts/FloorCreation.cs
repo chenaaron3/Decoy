@@ -70,15 +70,19 @@ public class FloorCreation : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(perimeterPos, Vector2.zero, .1f, 1 << LayerManager.TILE);
             hit.collider.GetComponent<SpriteRenderer>().color = Color.black;
         }
-        foreach (Vector2 bodyPos in TileGroup.bodyPositions)
-        {
-            RaycastHit2D hit = Physics2D.Raycast(bodyPos, Vector2.zero, .1f, 1 << LayerManager.TILE);
-            hit.collider.GetComponent<SpriteRenderer>().color = Color.green;
-        }
         foreach (Vector2 centerPos in TileGroup.centerPositions)
         {
             RaycastHit2D hit = Physics2D.Raycast(centerPos, Vector2.zero, .1f, 1 << LayerManager.TILE);
             hit.collider.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+        foreach (Vector2 bodyPos in TileGroup.bodyPositions)
+        {
+            if(!TileGroup.centerPositions.Contains(bodyPos))
+            {
+                RaycastHit2D hit = Physics2D.Raycast(bodyPos, Vector2.zero, .1f, 1 << LayerManager.TILE);
+                hit.collider.GetComponent<SpriteRenderer>().color = Color.green;
+                hit.collider.gameObject.layer = 0;
+            }
         }
     }
 }
