@@ -15,6 +15,7 @@ public class EnemyAggro : MonoBehaviour
     {
         if(collision.CompareTag("Player"))
         {
+            Debug.Log("Aggro Player!");
             myEnemy.GainAggro(collision.gameObject);
         }
     }
@@ -23,6 +24,7 @@ public class EnemyAggro : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            Debug.Log("Lose Aggro Player!");
             myEnemy.LoseAggro();
         }
     }

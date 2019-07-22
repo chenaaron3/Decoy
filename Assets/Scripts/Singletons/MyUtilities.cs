@@ -12,21 +12,21 @@ public class MyUtilities : MonoBehaviour
         SpriteRenderer sr = entity.transform.Find("Graphics").GetComponent<SpriteRenderer>();
         Material material = sr.material;
         yield return new WaitForSeconds(duration);
-        if (material.shader.Equals(Settings.instance.FlashMaterial.shader))
+        try
         {
             material.SetFloat("_SelfIllum", 0);
         }
-        else
+        catch
         {
             sr.color = Color.black;
         }
         yield return ChangeSize(entity.transform, Vector3.one * .8f, 5);
-        if (material.shader.Equals(Settings.instance.FlashMaterial.shader))
+        try
         {
             material.SetFloat("_SelfIllum", 1);
             material.SetFloat("_FlashAmount", 1);
         }
-        else
+        catch
         {
             sr.color = Color.white;
         }

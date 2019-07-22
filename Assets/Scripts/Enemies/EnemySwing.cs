@@ -17,7 +17,7 @@ public class EnemySwing : Enemy
     protected override IEnumerator Charge()
     {
         stunned = false;
-        yield return new WaitForSeconds(chargeTime / 2);
+        yield return new WaitForSeconds(chargeTime * .8f);
         stunned = true;
     }
 
@@ -32,5 +32,12 @@ public class EnemySwing : Enemy
     {
         yield return new WaitForSeconds(rechargeTime);
         stunned = false;
+        attacking = false;
+    }
+
+    protected override void Reset()
+    {
+        base.Reset();
+        swing.SetActive(false);
     }
 }

@@ -122,6 +122,8 @@ GameObject:
   m_Component:
   - component: {fileID: 91080670}
   - component: {fileID: 91080671}
+  - component: {fileID: 91080672}
+  - component: {fileID: 91080673}
   m_Layer: 0
   m_Name: EnemySwing
   m_TagString: Untagged
@@ -163,6 +165,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthImage: {fileID: 642481758}
   swing: {fileID: 719285738}
+--- !u!58 &91080672
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91080669}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.375
+--- !u!50 &91080673
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91080669}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &107718312
 GameObject:
   m_ObjectHideFlags: 0
@@ -961,8 +1000,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53aa183e15085ae4faea140ca844931b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  FlashMaterial: {fileID: 2100000, guid: 7a0db4b907d3b3c48adae8f8c8f219c9, type: 2}
+  DefaultMaterial: {fileID: 0}
+  FlashMaterial: {fileID: 0}
   unaggroColor: {r: 1, g: 1, b: 0.7372549, a: 1}
   aggroColor: {r: 1, g: 0.5647059, b: 0, a: 1}
   attackColor: {r: 1, g: 0, b: 0, a: 1}
@@ -999,7 +1038,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clonePrefab: {fileID: 7577520695905584994, guid: d90b47870db7d3a42b3fc1392d52362e,
     type: 3}
-  healthImage: {fileID: 1316506639}
+  healthImage: {fileID: 642481758}
   tr: {fileID: 979080523}
   maxHealth: 3
   speed: 3

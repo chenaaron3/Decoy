@@ -18,8 +18,10 @@ public abstract class Enemy : MonoBehaviour
 
     // state
     protected bool stunned = false;
+    protected bool attacking;
     protected GameObject target;
     Coroutine colorChange;
+    Coroutine bulgeRoutine;
     float health;
     public float Health
     {
@@ -47,6 +49,12 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
+    protected abstract void ExtendedStart();
+    protected abstract IEnumerator Charge();
+    protected abstract IEnumerator Attack();
+    protected abstract IEnumerator Recharge();
+
+
     private void Start()
     {
         // used for all enemies       
@@ -59,32 +67,14 @@ public abstract class Enemy : MonoBehaviour
         rechargeTime = 1;
         maxHealth = 3;
         speed = 2;
-
         ExtendedStart();
 
         // used for all enemies
         Health = maxHealth;
     }
 
-    protected abstract void ExtendedStart();
-
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            LoseAggro();
-            Health++;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            GainAggro(null);
-            Health--;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            ChargeCall();
-        }
-
         if (stunned)
         {
             return;
@@ -96,68 +86,104 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
-    public void LoseAggro()
-    {
-        if(target != null)
-        {
-            target = null;
-            StartCoroutine(MyUtilities.Bulge(transform));
-            ColorChange(Settings.instance.unaggroColor, .5f);
-        }
-    }
-
+    // Called when player enters aggro range
     public void GainAggro(GameObject target)
     {
-        if(target == null)
+        if (!stunned && this.target == null)
         {
+            Reset();
+            Bulge();
             this.target = target;
-            StartCoroutine(MyUtilities.Bulge(transform));
             ColorChange(Settings.instance.aggroColor, .5f);
         }
     }
 
-    public void ChargeCall()
+    // Called when player leaves aggro range
+    public void LoseAggro()
     {
-        // changes color from aggro to attack
-        ColorChange(Settings.instance.attackColor, chargeTime);
-        StartCoroutine(Charge());
-        Invoke("AttackCall", chargeTime);
-        StartCoroutine(MyUtilities.Bulge(transform, chargeTime - .25f));
+        if(target != null && target.CompareTag("Player"))
+        {
+            Reset();
+            Bulge();
+            target = null;
+            ColorChange(Settings.instance.unaggroColor, .5f);
+            // slight stun to prevent stutter with GainAggro
+            Stun(.25f);
+        }
     }
 
-    protected abstract IEnumerator Charge();
+    // Starts attack if not already attacking
+    public void ChargeCall()
+    {
+        // start attack phase if not already attacking
+        if (!attacking)
+        {
+            attacking = true;
+            StartCoroutine(Charge());
+            // changes color from aggro to attack
+            ColorChange(Settings.instance.attackColor, chargeTime);
+            Bulge(chargeTime - .5f);
+            Invoke("AttackCall", chargeTime);
+        }
+    }
 
+    // Attack Phase
     void AttackCall()
     {
-        Debug.Log("Attack!");
         StartCoroutine(Attack());
         Invoke("RechargeCall", attackTime);
     }
 
-    protected abstract IEnumerator Attack();
-
+    // Recharge Phase
     void RechargeCall()
     {
+        StartCoroutine(Recharge());
         // changes color from attack to aggro
         ColorChange(Settings.instance.aggroColor, rechargeTime);
-        StartCoroutine(MyUtilities.Bulge(transform, rechargeTime));
+        Bulge(rechargeTime);
     }
 
-    protected abstract IEnumerator Recharge();
+    // Starts a routine for stun
+    void Stun(float duration)
+    {
+        StartCoroutine(StunRoutine(duration));
+    }
 
-    void Die()
+    // Stuns for a given duration
+    IEnumerator StunRoutine(float duration)
+    {
+        stunned = true;
+        yield return new WaitForSeconds(duration);
+        stunned = false;
+    }
+
+    // return to ready state
+    protected virtual void Reset()
     {
         StopAllCoroutines();
+        CancelInvoke();
+        stunned = false;
+        attacking = false;
+    }
+
+    // Resets everything and dies
+    void Die()
+    {
+        Reset();
         StartCoroutine(DieRoutine());
     }
 
+    // Slides hp bar to 0 and dissapears
     IEnumerator DieRoutine()
     {
         stunned = true;
+        // 0 hp
         yield return MyUtilities.ChangeImageSliderRoutine(healthImage, 0);
+        // die
         yield return MyUtilities.DieRoutine(gameObject);
     }
 
+    // Manages Color Changes
     void ColorChange(Color endColor, float transitionTime)
     {
         // stop previous color change if exists
@@ -167,5 +193,18 @@ public abstract class Enemy : MonoBehaviour
             colorChange = null;
         }
         colorChange = StartCoroutine(MyUtilities.ColorChangeRoutine(sr, sr.color, endColor, transitionTime));
+    }
+
+    // Manages Bulges
+    void Bulge(float delay = 0)
+    {
+        // stop previous routine if exists
+        if(bulgeRoutine != null)
+        {
+            StopCoroutine(bulgeRoutine);
+            bulgeRoutine = null;
+        }
+        transform.localScale = Vector3.one;
+        bulgeRoutine = StartCoroutine(MyUtilities.Bulge(transform, delay));
     }
 }
