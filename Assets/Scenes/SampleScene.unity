@@ -121,6 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 91080670}
+  - component: {fileID: 91080671}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -143,6 +144,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &91080671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91080669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee3944650afa0c4e87001ef539e0be6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lerpspeed: 0.25
 --- !u!1 &107718312
 GameObject:
   m_ObjectHideFlags: 0
@@ -256,7 +270,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 7a0db4b907d3b3c48adae8f8c8f219c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -273,8 +287,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -239072711
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: fcefc846fb96cc440a507cd06058381e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -393,6 +407,7 @@ GameObject:
   m_Component:
   - component: {fileID: 726514799}
   - component: {fileID: 726514798}
+  - component: {fileID: 726514800}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -431,6 +446,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &726514800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 726514797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53aa183e15085ae4faea140ca844931b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unaggroColor: {r: 1, g: 1, b: 0.7372549, a: 1}
+  aggroColor: {r: 1, g: 0.5647059, b: 0, a: 1}
+  attackColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &804835307
 GameObject:
   m_ObjectHideFlags: 0
