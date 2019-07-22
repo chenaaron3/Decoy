@@ -6,6 +6,10 @@ public class Settings : MonoBehaviour
 {
     public static Settings instance;
 
+    [Header("Shader")]
+    public Material DefaultMaterial;
+    public Material FlashMaterial;
+
     [Header("Enemy Settings")]
     public Color unaggroColor;
     public Color aggroColor;

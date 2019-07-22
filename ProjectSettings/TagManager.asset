@@ -6,6 +6,7 @@ TagManager:
   tags:
   - TileOrigin
   - TileMember
+  - EnemyDamager
   layers:
   - Default
   - TransparentFX

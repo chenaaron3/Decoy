@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     // components
     public GameObject clonePrefab;
+    public Image healthImage;
 
     // trail renderer
     public TrailRenderer tr;
@@ -15,6 +18,7 @@ public class PlayerController : MonoBehaviour
 
     // stats
     float size;
+    public float maxHealth = 3;
     public float speed = 3;
     public float cloneDuration = 2;
     public float dashDistance = 1;
@@ -22,7 +26,31 @@ public class PlayerController : MonoBehaviour
     // states
     Vector2 movingDirection;
     bool stunned;
-
+    float health;
+    public float Health
+    {
+        get
+        {
+            return health;
+        }
+        set
+        {
+            if (value <= 0)
+            {
+                healthImage.gameObject.SetActive(false);
+                Die();
+            }
+            else if (value >= maxHealth)
+            {
+                health = maxHealth;
+            }
+            else
+            {
+                health = value;
+            }
+            healthImage.fillAmount = health / maxHealth;
+        }
+    }
 
     private void Start()
     {
@@ -136,5 +164,18 @@ public class PlayerController : MonoBehaviour
         tr.time = 0;
         tr.startWidth = 0;
         tr.enabled = false;
+    }
+
+    void Die()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("EnemyDamager"))
+        {
+            Health--;
+        }
     }
 }
