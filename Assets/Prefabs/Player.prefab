@@ -240,7 +240,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8900478316911733295}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.0505768, y: -2.0764613, z: -0.11723585}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -266,8 +266,12 @@ MonoBehaviour:
   clonePrefab: {fileID: 7577520695905584994, guid: d90b47870db7d3a42b3fc1392d52362e,
     type: 3}
   healthImage: {fileID: 0}
+  meleeImage: {fileID: 0}
+  rangedImage: {fileID: 0}
   tr: {fileID: 8900478316389896236}
   maxHealth: 3
+  maxMeleeStacks: 3
+  maxRangedStacks: 3
   speed: 3
   cloneDuration: 1.5
   dashDistance: 1

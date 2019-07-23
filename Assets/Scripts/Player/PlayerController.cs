@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     // components
     public GameObject clonePrefab;
-    public Image healthImage;
+    Animator weaponAnim;
+    [HideInInspector]
+    public PlayerUI myUI;
 
     // trail renderer
     public TrailRenderer tr;
@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
 
     // stats
     float size;
-    public float maxHealth = 3;
     public float speed = 3;
     public float cloneDuration = 2;
     public float dashDistance = 1;
@@ -26,38 +25,15 @@ public class PlayerController : MonoBehaviour
     // states
     Vector2 movingDirection;
     bool stunned;
-    float health;
-    public float Health
-    {
-        get
-        {
-            return health;
-        }
-        set
-        {
-            if (value <= 0)
-            {
-                healthImage.gameObject.SetActive(false);
-                Die();
-            }
-            else if (value >= maxHealth)
-            {
-                health = maxHealth;
-            }
-            else
-            {
-                health = value;
-            }
-            healthImage.fillAmount = health / maxHealth;
-        }
-    }
 
     private void Start()
     {
+        weaponAnim = transform.Find("Weapon").GetComponent<Animator>();
         size = transform.Find("Graphics").localScale.x;
         trailRendererTime = tr.time;
         trailRendererWidth = tr.startWidth;
         tr.enabled = false;
+        myUI = GetComponent<PlayerUI>();
     }
 
     private void Update()
@@ -76,12 +52,12 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            Shoot();
+            RangedAttack();
         }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Slash();
+            MeleeAttack();
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -90,20 +66,29 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void Shoot()
+    void RangedAttack()
     {
-
+        if(myUI.RangedStacks > 0)
+        {
+            weaponAnim.SetTrigger("RangedAttack");
+            myUI.RangedStacks--;
+        }
     }
 
-    void Slash()
+    void MeleeAttack()
     {
-
+        if (myUI.MeleeStacks > 0)
+        {
+            weaponAnim.SetTrigger("MeleeAttack");
+            myUI.MeleeStacks--;
+        }
     }
 
     // Instantiates a clone that dies after a duration
     void Clone()
     {
-        Instantiate(clonePrefab, transform.position, Quaternion.identity).GetComponent<Clone>().Die(cloneDuration);
+        Clone c = Instantiate(clonePrefab, transform.position, Quaternion.identity).GetComponent<Clone>();
+        c.owner = this;
         Dash(movingDirection);
     }
 
@@ -166,16 +151,11 @@ public class PlayerController : MonoBehaviour
         tr.enabled = false;
     }
 
-    void Die()
-    {
-        SceneManager.LoadScene(0);
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("EnemyDamager"))
+        if(collision.tag.Contains("EnemyDamager"))
         {
-            Health--;
+            myUI.Health--;
         }
     }
 }

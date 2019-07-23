@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8196604885496343375}
   m_Layer: 0
   m_Name: Hitbox
-  m_TagString: EnemyDamager
+  m_TagString: EnemyDamagerMelee
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

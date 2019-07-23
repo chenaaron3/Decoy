@@ -6,26 +6,33 @@ public class Clone : MonoBehaviour
 {
     HashSet<GameObject> hitHistory;
 
-    private const string SHADER_COLOR_NAME = "_Color";
-    private Material material;
+    public PlayerController owner;
     SpriteRenderer sr;
 
     private void Start()
     {
         hitHistory = new HashSet<GameObject>();
         sr = transform.Find("Graphics").GetComponent<SpriteRenderer>();
-        // makes a new instance of the material for runtime changes
-        material = sr.material;
+        Die(owner.cloneDuration);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // If collided with enemy attacks, give player attacks
-        if(collision.CompareTag("EnemyDamager"))
+        // If collided with enemy attacks
+        if(collision.tag.Contains("EnemyDamager"))
         {
-            if(!hitHistory.Contains(collision.gameObject))
+            // if not already damaged by this source
+            if (!hitHistory.Contains(collision.gameObject))
             {
                 hitHistory.Add(collision.gameObject);
+                if (collision.tag.Contains("Melee"))
+                {
+                    owner.myUI.MeleeStacks++;
+                }
+                else if(collision.tag.Contains("Ranged"))
+                {
+                    owner.myUI.RangedStacks++;
+                }
             }
         }
     }
