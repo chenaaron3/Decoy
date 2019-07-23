@@ -149,7 +149,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 734448280903312251}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!96 &734448280464780178
 TrailRenderer:
@@ -285,7 +285,7 @@ Transform:
   m_Children:
   - {fileID: 412608589}
   m_Father: {fileID: 734448280903312251}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &734448280902807188
 SpriteRenderer:
@@ -362,8 +362,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 734448280902807190}
   - {fileID: 734448280464780179}
+  - {fileID: 734448280902807190}
   m_Father: {fileID: 734448279992272776}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
