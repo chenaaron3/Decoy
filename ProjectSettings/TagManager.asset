@@ -8,6 +8,8 @@ TagManager:
   - TileMember
   - EnemyDamagerMelee
   - EnemyDamagerRanged
+  - Enemy
+  - PlayerDamager
   layers:
   - Default
   - TransparentFX

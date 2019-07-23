@@ -7,6 +7,7 @@ public abstract class Enemy : MonoBehaviour
 {
     // components
     protected SpriteRenderer sr;
+    protected Rigidbody2D rb;
     public Image healthImage;
 
     // stats
@@ -22,6 +23,7 @@ public abstract class Enemy : MonoBehaviour
     protected GameObject target;
     Coroutine colorChange;
     Coroutine bulgeRoutine;
+    Coroutine knockBackRoutine;
     float health;
     public float Health
     {
@@ -54,10 +56,10 @@ public abstract class Enemy : MonoBehaviour
     protected abstract IEnumerator Attack();
     protected abstract IEnumerator Recharge();
 
-
     private void Start()
     {
         // used for all enemies       
+        rb = GetComponent<Rigidbody2D>();
         sr = transform.Find("Graphics").GetComponent<SpriteRenderer>();
         sr.color = Settings.instance.unaggroColor;
 
@@ -89,7 +91,7 @@ public abstract class Enemy : MonoBehaviour
     // Called when player enters aggro range
     public void GainAggro(GameObject target)
     {
-        if (!stunned && this.target == null)
+        if (!stunned && this.target == null && Health > 0)
         {
             Reset();
             Bulge();
@@ -101,7 +103,7 @@ public abstract class Enemy : MonoBehaviour
     // Called when player leaves aggro range
     public void LoseAggro()
     {
-        if(target != null && target.CompareTag("Player"))
+        if(target != null && target.CompareTag("Player") && Health > 0)
         {
             Reset();
             Bulge();
@@ -170,13 +172,15 @@ public abstract class Enemy : MonoBehaviour
     void Die()
     {
         Reset();
+        // dont attack after ur dead
+        stunned = true;
+        attacking = true;
         StartCoroutine(DieRoutine());
     }
 
     // Slides hp bar to 0 and dissapears
     IEnumerator DieRoutine()
     {
-        stunned = true;
         // 0 hp
         yield return MyUtilities.ChangeImageSliderRoutine(healthImage, 0);
         // die
@@ -206,5 +210,33 @@ public abstract class Enemy : MonoBehaviour
         }
         transform.localScale = Vector3.one;
         bulgeRoutine = StartCoroutine(MyUtilities.Bulge(transform, delay));
+    }
+
+    public void KnockBack(Vector2 direction, float power)
+    {
+        // only knock back if alive and not already knocking back
+        if(knockBackRoutine == null)
+        {
+            if(Health > 0)
+            {
+                knockBackRoutine = StartCoroutine(KnockBackRoutine(direction, power));
+            }
+            else
+            {
+                rb.AddForce(direction * power, ForceMode2D.Impulse);
+            }
+        }
+    }
+
+    IEnumerator KnockBackRoutine(Vector2 direction, float power)
+    {
+        // Knock back
+        stunned = true;
+        rb.AddForce(direction * power, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(.1f);
+        rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(.2f);
+        stunned = false;
+        knockBackRoutine = null;
     }
 }

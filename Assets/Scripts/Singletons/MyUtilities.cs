@@ -15,20 +15,20 @@ public class MyUtilities : MonoBehaviour
         try
         {
             material.SetFloat("_SelfIllum", 0);
+            sr.color = Color.black;
         }
         catch
         {
-            sr.color = Color.black;
         }
         yield return ChangeSize(entity.transform, Vector3.one * .8f, 5);
         try
         {
             material.SetFloat("_SelfIllum", 1);
             material.SetFloat("_FlashAmount", 1);
+            sr.color = Color.white;
         }
         catch
         {
-            sr.color = Color.white;
         }
         yield return ChangeSize(entity.transform, Vector3.one * 1.2f, 8);
         Destroy(entity);
@@ -94,5 +94,10 @@ public class MyUtilities : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         Camera.main.transform.localPosition = initPos;
+    }
+
+    public static float Distance(GameObject o1, GameObject o2)
+    {
+        return (o1.transform.position - o2.transform.position).magnitude;
     }
 }

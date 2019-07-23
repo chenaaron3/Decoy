@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     Animator weaponAnim;
     [HideInInspector]
     public PlayerUI myUI;
+    GameObject body;
 
     // trail renderer
     public TrailRenderer tr;
@@ -24,16 +25,21 @@ public class PlayerController : MonoBehaviour
 
     // states
     Vector2 movingDirection;
+    Vector2 lookingDirection;
     bool stunned;
+    public HashSet<GameObject> enemiesInRange;
+    GameObject closestEnemy;
 
     private void Start()
     {
-        weaponAnim = transform.Find("Weapon").GetComponent<Animator>();
-        size = transform.Find("Graphics").localScale.x;
+        myUI = GetComponent<PlayerUI>();
+        body = transform.Find("Graphics").gameObject;
+        size = body.transform.localScale.x;
+        weaponAnim = body.transform.Find("Weapon").GetComponent<Animator>();
         trailRendererTime = tr.time;
         trailRendererWidth = tr.startWidth;
         tr.enabled = false;
-        myUI = GetComponent<PlayerUI>();
+        enemiesInRange = new HashSet<GameObject>();
     }
 
     private void Update()
@@ -43,19 +49,26 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        movingDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        // for translation
+        Vector2 inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        movingDirection = inputDirection.magnitude == 0 ? movingDirection : inputDirection;
         RaycastHit2D moveHit = Physics2D.Raycast(transform.position, movingDirection, size / 2, 1 << LayerManager.TILE);
         if (!moveHit)
         {
-            transform.position += (Vector3)movingDirection * speed * Time.deltaTime;
+            transform.position += (Vector3)inputDirection * speed * Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        // for rotation
+        AssignClosestEnemy();
+        lookingDirection = closestEnemy == null ? movingDirection : (Vector2)(closestEnemy.transform.position - transform.position).normalized;
+        body.transform.right = lookingDirection;
+
+        if (Input.GetKeyDown(KeyCode.Period))
         {
             RangedAttack();
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Comma))
         {
             MeleeAttack();
         }
@@ -66,6 +79,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Triggers Ranged Attack
     void RangedAttack()
     {
         if (myUI.RangedStacks > -1)
@@ -76,6 +90,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Triggers Melee Attack
     void MeleeAttack()
     {
         if (myUI.MeleeStacks > -1)
@@ -153,11 +168,31 @@ public class PlayerController : MonoBehaviour
         tr.enabled = false;
     }
 
+    public void AssignClosestEnemy()
+    {
+        if(enemiesInRange.Count == 0)
+        {
+            closestEnemy = null;
+        }
+        else
+        {
+            float nearestDistance = float.MaxValue;
+            foreach(GameObject go in enemiesInRange)
+            {
+                float distance = MyUtilities.Distance(gameObject, go);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    closestEnemy = go;
+                }
+            }
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.tag.Contains("EnemyDamager"))
         {
-            Debug.Log(collision.gameObject.name);
             myUI.Health--;
         }
     }
