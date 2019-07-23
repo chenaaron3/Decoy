@@ -5,13 +5,6 @@
 [Bb]uilds/
 [Ll]ogs/
 
-[merge]
-tool = unityyamlmerge
-
-[mergetool "unityyamlmerge"]
-trustExitCode = false
-cmd = '<path to UnityYAMLMerge>' merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"
-
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # [Aa]ssets/AssetStoreTools*
 
