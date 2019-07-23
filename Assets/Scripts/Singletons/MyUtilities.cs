@@ -74,4 +74,25 @@ public class MyUtilities : MonoBehaviour
             yield return null;
         }
     }
+
+    public static IEnumerator ScreenShake(float shakeAmt = .1f, float shakeTime = .2f)
+    {
+        Vector3 initPos = Camera.main.transform.localPosition;
+        float time = 0;
+        while (time < shakeTime)
+        {
+            float shakeMultiplyer = (1 - time / shakeTime);
+            Vector3 pp = Camera.main.transform.localPosition;
+            float quakeAmt = shakeMultiplyer * shakeAmt * (Random.value * 2 - 1);
+            pp.y += quakeAmt;
+            quakeAmt = shakeAmt * (Random.value * 2 - 1);
+            pp.x += quakeAmt;
+            Camera.main.transform.localPosition = pp;
+            yield return new WaitForEndOfFrame();
+            time += Time.fixedDeltaTime;
+            Camera.main.transform.localPosition = initPos;
+            yield return new WaitForEndOfFrame();
+        }
+        Camera.main.transform.localPosition = initPos;
+    }
 }

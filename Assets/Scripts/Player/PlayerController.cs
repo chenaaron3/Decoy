@@ -68,19 +68,21 @@ public class PlayerController : MonoBehaviour
 
     void RangedAttack()
     {
-        if(myUI.RangedStacks > 0)
+        if (myUI.RangedStacks > -1)
         {
             weaponAnim.SetTrigger("RangedAttack");
             myUI.RangedStacks--;
+            StartCoroutine(MyUtilities.ScreenShake());
         }
     }
 
     void MeleeAttack()
     {
-        if (myUI.MeleeStacks > 0)
+        if (myUI.MeleeStacks > -1)
         {
             weaponAnim.SetTrigger("MeleeAttack");
             myUI.MeleeStacks--;
+            StartCoroutine(MyUtilities.ScreenShake());
         }
     }
 
@@ -155,6 +157,7 @@ public class PlayerController : MonoBehaviour
     {
         if(collision.tag.Contains("EnemyDamager"))
         {
+            Debug.Log(collision.gameObject.name);
             myUI.Health--;
         }
     }

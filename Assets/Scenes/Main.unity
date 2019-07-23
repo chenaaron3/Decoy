@@ -30424,6 +30424,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8900478315566498700, guid: b2dbf180222863846a99abbf64f59e90,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900478315566498700, guid: b2dbf180222863846a99abbf64f59e90,
+        type: 3}
+      propertyPath: m_Name
+      value: Weapon
+      objectReference: {fileID: 0}
     - target: {fileID: 8900478316911733328, guid: b2dbf180222863846a99abbf64f59e90,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -30494,16 +30504,6 @@ PrefabInstance:
       propertyPath: rangedImage
       value: 
       objectReference: {fileID: 827602801}
-    - target: {fileID: 8900478315566498700, guid: b2dbf180222863846a99abbf64f59e90,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8900478315566498700, guid: b2dbf180222863846a99abbf64f59e90,
-        type: 3}
-      propertyPath: m_Name
-      value: Weapon
-      objectReference: {fileID: 0}
     - target: {fileID: 8900478315566498702, guid: b2dbf180222863846a99abbf64f59e90,
         type: 3}
       propertyPath: m_SortingLayerID
