@@ -82,15 +82,19 @@ public abstract class Enemy : MonoBehaviour
             return;
         }
 
+        // Movement
         if (target != null)
         {
             transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
         }
+
+        // Maybe use AStar later on
     }
 
     // Called when player enters aggro range
     public void GainAggro(GameObject target)
     {
+        // if not stunned and not dead
         if (!stunned && this.target == null && Health > 0)
         {
             Reset();
@@ -103,6 +107,7 @@ public abstract class Enemy : MonoBehaviour
     // Called when player leaves aggro range
     public void LoseAggro()
     {
+        // if player leaves and not dead
         if(target != null && target.CompareTag("Player") && Health > 0)
         {
             Reset();
@@ -230,6 +235,10 @@ public abstract class Enemy : MonoBehaviour
 
     IEnumerator KnockBackRoutine(Vector2 direction, float power)
     {
+        Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(.05f);
+        Time.timeScale = 1;
+
         // Knock back
         stunned = true;
         rb.AddForce(direction * power, ForceMode2D.Impulse);
