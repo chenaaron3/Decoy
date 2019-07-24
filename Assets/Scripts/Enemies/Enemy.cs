@@ -108,7 +108,7 @@ public abstract class Enemy : MonoBehaviour
     public void LoseAggro()
     {
         // if player leaves and not dead
-        if(target != null && target.CompareTag("Player") && Health > 0)
+        if(target != null && Health > 0)
         {
             Reset();
             Bulge();
@@ -217,7 +217,13 @@ public abstract class Enemy : MonoBehaviour
         bulgeRoutine = StartCoroutine(MyUtilities.Bulge(transform, delay));
     }
 
-    public void KnockBack(Vector2 direction, float power)
+    public void TakeDamage(Vector2 direction)
+    {
+        Health--;
+        KnockBack(direction, 8);
+    }
+
+    void KnockBack(Vector2 direction, float power)
     {
         // only knock back if alive and not already knocking back
         if(knockBackRoutine == null)

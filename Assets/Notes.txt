@@ -1,0 +1,7 @@
+Combat
+- Damager: attached to weapons
+	- deals the damage
+	- needs rigidbody to have script work
+- Hitbox Tag: tagged to entity graphics
+	- triggers Damagers
+	- needs rigidbody to have trigger

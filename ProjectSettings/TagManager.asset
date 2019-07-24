@@ -9,6 +9,9 @@ TagManager:
   - EnemyDamagerMelee
   - EnemyDamagerRanged
   - Enemy
+  - Clone
+  - PlayerHitbox
+  - EnemyHitbox
   - PlayerDamager
   layers:
   - Default
