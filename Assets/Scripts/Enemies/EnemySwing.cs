@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemySwing : Enemy
 {
     public GameObject swing;
+    float normalSpeed = 3;
+    float chargeSpeed = 3.5f;
 
     protected override void ExtendedStart()
     {
@@ -12,17 +14,20 @@ public class EnemySwing : Enemy
         attackTime = .5f;
         rechargeTime = 1;
         maxHealth = 3;
+        speed = normalSpeed;
     }
 
     protected override IEnumerator Charge()
     {
         stunned = false;
+        speed = chargeSpeed;
         yield return new WaitForSeconds(chargeTime * .8f);
-        stunned = true;
+        speed = normalSpeed;
     }
 
     protected override IEnumerator Attack()
     {
+        stunned = true;
         swing.SetActive(true);
         yield return new WaitForSeconds(attackTime);
         swing.SetActive(false);
