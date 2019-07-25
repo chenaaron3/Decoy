@@ -79,6 +79,7 @@ public class FloorCreation : MonoBehaviour
         }
         foreach (Vector2 bodyPos in TileGroup.bodyPositions)
         {
+            // body that is not center
             if(!TileGroup.centerPositions.Contains(bodyPos))
             {
                 RaycastHit2D hit = Physics2D.Raycast(bodyPos, Vector2.zero, .1f, 1 << LayerManager.TILE);
