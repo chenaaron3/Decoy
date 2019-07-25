@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
+
     // components
     public GameObject clonePrefab;
     Animator weaponAnim;
@@ -18,6 +20,7 @@ public class PlayerController : MonoBehaviour
     float fadingDuration = .5f;
 
     // stats
+    public float range;
     float size;
     public float speed = 3;
     public float cloneDuration = 2;
@@ -30,11 +33,17 @@ public class PlayerController : MonoBehaviour
     public HashSet<GameObject> enemiesInRange;
     GameObject closestEnemy;
 
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
         myUI = GetComponent<PlayerUI>();
         body = transform.Find("Graphics").gameObject;
         size = body.transform.localScale.x;
+        range = transform.Find("AggroRange").GetComponent<CircleCollider2D>().radius;
         weaponAnim = body.transform.Find("Weapon").GetComponent<Animator>();
         trailRendererTime = tr.time;
         trailRendererWidth = tr.startWidth;

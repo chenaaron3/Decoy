@@ -5,4 +5,5 @@ using UnityEngine;
 public class LayerManager : MonoBehaviour
 {
     public static int TILE = 8;
+    public static int ENEMY = 9;
 }

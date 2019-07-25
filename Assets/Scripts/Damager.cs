@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Damager : MonoBehaviour
 {
+    public GameObject effects;
     HashSet<GameObject> hitHistory;
     public bool playerSource;
     public bool enemySource;
@@ -46,7 +47,17 @@ public class Damager : MonoBehaviour
         // if player hitting enemy
         if(collision.CompareTag("EnemyHitbox") && playerSource)
         {
-            collision.GetComponentInParent<Enemy>().TakeDamage((collision.transform.position - transform.position).normalized);
+            if(effects)
+            {
+                Destroy(Instantiate(effects, collision.transform.position, Quaternion.identity), 3);
+            }
+            Vector2 displacement = collision.transform.position - transform.parent.position;
+            float inverseDisplacement = 1 / Mathf.Max(1, displacement.magnitude);
+            float minInverseDisp = 1 / PlayerController.instance.range;
+            float power = MyUtilities.Remap(Mathf.Max(inverseDisplacement, minInverseDisp), minInverseDisp, 1, 3, 15);
+            Debug.Log("Scale: " + 1 / Mathf.Max(1, displacement.magnitude));
+            Debug.Log("Power: " + power);
+            collision.GetComponentInParent<Enemy>().TakeDamage(displacement.normalized, power);
         }
     }
 }

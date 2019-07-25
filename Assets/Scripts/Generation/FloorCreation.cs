@@ -68,13 +68,17 @@ public class FloorCreation : MonoBehaviour
         foreach(Vector2 perimeterPos in TileGroup.perimeterPositions)
         {
             RaycastHit2D hit = Physics2D.Raycast(perimeterPos, Vector2.zero, .1f, 1 << LayerManager.TILE);
-            hit.collider.GetComponent<SpriteRenderer>().color = Color.black;
+            SpriteRenderer sr = hit.collider.GetComponent<SpriteRenderer>();
+            sr.color = Color.black;
+            sr.sortingLayerName = "Surface";
             hit.collider.GetComponent<BoxCollider2D>().isTrigger = false;
         }
         foreach (Vector2 centerPos in TileGroup.centerPositions)
         {
             RaycastHit2D hit = Physics2D.Raycast(centerPos, Vector2.zero, .1f, 1 << LayerManager.TILE);
-            hit.collider.GetComponent<SpriteRenderer>().color = Color.red;
+            SpriteRenderer sr = hit.collider.GetComponent<SpriteRenderer>();
+            sr.color = Color.red;
+            sr.sortingLayerName = "Surface";
             hit.collider.GetComponent<BoxCollider2D>().isTrigger = false;
         }
         foreach (Vector2 bodyPos in TileGroup.bodyPositions)
@@ -84,6 +88,7 @@ public class FloorCreation : MonoBehaviour
             {
                 RaycastHit2D hit = Physics2D.Raycast(bodyPos, Vector2.zero, .1f, 1 << LayerManager.TILE);
                 hit.collider.GetComponent<SpriteRenderer>().color = Color.green;
+                // no longer in tile layer
                 hit.collider.gameObject.layer = 0;
             }
         }

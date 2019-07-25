@@ -10,11 +10,7 @@ public class EnemySwing : Enemy
 
     protected override void ExtendedStart()
     {
-        chargeTime = 2;
-        attackTime = .5f;
-        rechargeTime = 1;
-        maxHealth = 3;
-        speed = normalSpeed;
+
     }
 
     protected override IEnumerator Charge()

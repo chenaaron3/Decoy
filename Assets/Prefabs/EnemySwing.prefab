@@ -247,6 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92a9331b499635546a81b14cd42b781d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  effects: {fileID: 0}
   playerSource: 0
   enemySource: 1
 --- !u!1 &6791699942615437790
@@ -261,7 +262,7 @@ GameObject:
   - component: {fileID: 6791699942615437788}
   - component: {fileID: 6791699942615437795}
   - component: {fileID: 710032258887293149}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: EnemySwing
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -300,6 +301,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthImage: {fileID: 6791699942126970973}
+  chargeTime: 2
+  attackTime: 0.5
+  rechargeTime: 1
+  maxHealth: 100
+  speed: 3
   swing: {fileID: 6084855457802858107}
 --- !u!58 &6791699942615437795
 CircleCollider2D:

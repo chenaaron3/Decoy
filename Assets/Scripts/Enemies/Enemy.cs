@@ -11,17 +11,17 @@ public abstract class Enemy : MonoBehaviour
     public Image healthImage;
 
     // stats
-    protected float chargeTime;
-    protected float attackTime;
-    protected float rechargeTime;
-    protected float maxHealth;
-    protected float speed;
+    public float chargeTime;
+    public float attackTime;
+    public float rechargeTime;
+    public float maxHealth;
+    public float speed;
 
     // state
     protected bool stunned = false;
     protected bool attacking;
     protected GameObject target;
-    Coroutine colorChange;
+    Coroutine colorChangeRoutine;
     Coroutine bulgeRoutine;
     Coroutine knockBackRoutine;
     float health;
@@ -63,12 +63,6 @@ public abstract class Enemy : MonoBehaviour
         sr = transform.Find("Graphics").GetComponent<SpriteRenderer>();
         sr.color = Settings.instance.unaggroColor;
 
-        // change in child class
-        chargeTime = 2;
-        attackTime = .5f;
-        rechargeTime = 1;
-        maxHealth = 3;
-        speed = 2;
         ExtendedStart();
 
         // used for all enemies
@@ -171,6 +165,9 @@ public abstract class Enemy : MonoBehaviour
         CancelInvoke();
         stunned = false;
         attacking = false;
+        bulgeRoutine = null;
+        knockBackRoutine = null;
+        colorChangeRoutine = null;
     }
 
     // Resets everything and dies
@@ -196,12 +193,12 @@ public abstract class Enemy : MonoBehaviour
     void ColorChange(Color endColor, float transitionTime)
     {
         // stop previous color change if exists
-        if(colorChange != null)
+        if(colorChangeRoutine != null)
         {
-            StopCoroutine(colorChange);
-            colorChange = null;
+            StopCoroutine(colorChangeRoutine);
+            colorChangeRoutine = null;
         }
-        colorChange = StartCoroutine(MyUtilities.ColorChangeRoutine(sr, sr.color, endColor, transitionTime));
+        colorChangeRoutine = StartCoroutine(MyUtilities.ColorChangeRoutine(sr, sr.color, endColor, transitionTime));
     }
 
     // Manages Bulges
@@ -217,10 +214,10 @@ public abstract class Enemy : MonoBehaviour
         bulgeRoutine = StartCoroutine(MyUtilities.Bulge(transform, delay));
     }
 
-    public void TakeDamage(Vector2 direction)
+    public void TakeDamage(Vector2 direction, float power)
     {
         Health--;
-        KnockBack(direction, 8);
+        KnockBack(direction, power);
     }
 
     void KnockBack(Vector2 direction, float power)
