@@ -11,6 +11,7 @@ public class EnemyAttackRange : MonoBehaviour
         myEnemy = GetComponentInParent<Enemy>();
     }
 
+    // while player is inside attack range, attempt to attack
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))

@@ -6,24 +6,26 @@ using UnityEngine.UI;
 public abstract class Enemy : MonoBehaviour
 {
     // components
-    protected SpriteRenderer sr;
-    protected Rigidbody2D rb;
-    public Image healthImage;
+    protected SpriteRenderer sr; // sprite renderer on graphics
+    protected Rigidbody2D rb; // dynamic rigid body
+    public Image healthImage; // health UI
 
     // stats
-    public float chargeTime;
-    public float attackTime;
-    public float rechargeTime;
-    public float maxHealth;
-    public float speed;
+    public float chargeTime; // time to charge
+    public float attackTime; // attack time duration
+    public float rechargeTime; // recharging time
+    public float maxHealth; // maximum health
+    public float speed; // movement speed
 
     // state
-    protected bool stunned = false;
-    protected bool attacking;
-    protected GameObject target;
+    protected bool stunned = false; // cannot move if stunned
+    protected bool attacking; // prevents double attacking
+    protected GameObject target; // player target
+        // keep track of routines to prevent overlapping
     Coroutine colorChangeRoutine;
     Coroutine bulgeRoutine;
     Coroutine knockBackRoutine;
+        // deals with HP changes
     float health;
     public float Health
     {
@@ -144,6 +146,31 @@ public abstract class Enemy : MonoBehaviour
         Bulge(rechargeTime);
     }
 
+    // Manages Color Changes
+    void ColorChange(Color endColor, float transitionTime)
+    {
+        // stop previous color change if exists
+        if (colorChangeRoutine != null)
+        {
+            StopCoroutine(colorChangeRoutine);
+            colorChangeRoutine = null;
+        }
+        colorChangeRoutine = StartCoroutine(MyUtilities.ColorChangeRoutine(sr, sr.color, endColor, transitionTime));
+    }
+
+    // Manages Bulges
+    void Bulge(float delay = 0)
+    {
+        // stop previous routine if exists
+        if (bulgeRoutine != null)
+        {
+            StopCoroutine(bulgeRoutine);
+            bulgeRoutine = null;
+        }
+        transform.localScale = Vector3.one;
+        bulgeRoutine = StartCoroutine(MyUtilities.Bulge(transform, delay));
+    }
+
     // Starts a routine for stun
     void Stun(float duration)
     {
@@ -158,16 +185,38 @@ public abstract class Enemy : MonoBehaviour
         stunned = false;
     }
 
-    // return to ready state
-    protected virtual void Reset()
+    // Applies a knock back given direction and power
+    void KnockBack(Vector2 direction, float power)
     {
-        StopAllCoroutines();
-        CancelInvoke();
+        // only knock back if alive and not already knocking back
+        if(knockBackRoutine == null)
+        {
+            if(Health > 0)
+            {
+                knockBackRoutine = StartCoroutine(KnockBackRoutine(direction, power));
+            }
+            else
+            {
+                rb.AddForce(direction * power, ForceMode2D.Impulse);
+            }
+        }
+    }
+
+    // Stops the knock back after some time
+    IEnumerator KnockBackRoutine(Vector2 direction, float power)
+    {
+        Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(.05f);
+        Time.timeScale = 1;
+
+        // Knock back
+        stunned = true;
+        rb.AddForce(direction * power, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(.1f);
+        rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(.2f);
         stunned = false;
-        attacking = false;
-        bulgeRoutine = null;
         knockBackRoutine = null;
-        colorChangeRoutine = null;
     }
 
     // Resets everything and dies
@@ -189,66 +238,22 @@ public abstract class Enemy : MonoBehaviour
         yield return MyUtilities.DieRoutine(gameObject);
     }
 
-    // Manages Color Changes
-    void ColorChange(Color endColor, float transitionTime)
+    // return to ready state
+    protected virtual void Reset()
     {
-        // stop previous color change if exists
-        if(colorChangeRoutine != null)
-        {
-            StopCoroutine(colorChangeRoutine);
-            colorChangeRoutine = null;
-        }
-        colorChangeRoutine = StartCoroutine(MyUtilities.ColorChangeRoutine(sr, sr.color, endColor, transitionTime));
+        StopAllCoroutines();
+        CancelInvoke();
+        stunned = false;
+        attacking = false;
+        bulgeRoutine = null;
+        knockBackRoutine = null;
+        colorChangeRoutine = null;
     }
 
-    // Manages Bulges
-    void Bulge(float delay = 0)
-    {
-        // stop previous routine if exists
-        if(bulgeRoutine != null)
-        {
-            StopCoroutine(bulgeRoutine);
-            bulgeRoutine = null;
-        }
-        transform.localScale = Vector3.one;
-        bulgeRoutine = StartCoroutine(MyUtilities.Bulge(transform, delay));
-    }
-
+    // takes damage and applies knock back
     public void TakeDamage(Vector2 direction, float power)
     {
         Health--;
         KnockBack(direction, power);
-    }
-
-    void KnockBack(Vector2 direction, float power)
-    {
-        // only knock back if alive and not already knocking back
-        if(knockBackRoutine == null)
-        {
-            if(Health > 0)
-            {
-                knockBackRoutine = StartCoroutine(KnockBackRoutine(direction, power));
-            }
-            else
-            {
-                rb.AddForce(direction * power, ForceMode2D.Impulse);
-            }
-        }
-    }
-
-    IEnumerator KnockBackRoutine(Vector2 direction, float power)
-    {
-        Time.timeScale = 0;
-        yield return new WaitForSecondsRealtime(.05f);
-        Time.timeScale = 1;
-
-        // Knock back
-        stunned = true;
-        rb.AddForce(direction * power, ForceMode2D.Impulse);
-        yield return new WaitForSeconds(.1f);
-        rb.velocity = Vector2.zero;
-        yield return new WaitForSeconds(.2f);
-        stunned = false;
-        knockBackRoutine = null;
     }
 }

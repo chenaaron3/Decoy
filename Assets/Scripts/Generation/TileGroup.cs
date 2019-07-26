@@ -44,6 +44,7 @@ public class TileGroup : MonoBehaviour
         }
     }
 
+    // Prevents duplicate tiles
     void CheckOverlap()
     {
         // if on an existing perimeter position
@@ -59,6 +60,7 @@ public class TileGroup : MonoBehaviour
         }
     }
 
+    // Assigns attributes
     void AssignAttributes(int length, int level, float spreadRate)
     {
         this.length = length;
@@ -66,6 +68,7 @@ public class TileGroup : MonoBehaviour
         this.spreadRate = spreadRate;
     }
 
+    // Creates the extension arrays
     void CreateExtensions()
     {
         extensions = new List<Vector2[]>();
@@ -77,6 +80,7 @@ public class TileGroup : MonoBehaviour
         extensions.Add(CreateExtension(Vector2.left * horizontalOffset, Vector2.up));
     }
 
+    // gets the positions for possible extensions (odd numbers only)
     Vector2[] CreateExtension(Vector2 horizontalOffset, Vector2 extensionDirection)
     {
         Vector2[] extension = new Vector2[length];
@@ -93,6 +97,7 @@ public class TileGroup : MonoBehaviour
         return extension;
     }
 
+    // creates the tiles for the tile group perimeter
     bool RenderExtensions()
     {
         bool impacted = false;
@@ -112,6 +117,7 @@ public class TileGroup : MonoBehaviour
         return impacted;
     }
 
+    // creates the tiles for the body
     bool RenderBody()
     {
         bool impacted = false;
@@ -146,6 +152,7 @@ public class TileGroup : MonoBehaviour
         return impacted;
     }
 
+    // recursively spreads the tile group origin
     public void Spread()
     {
         if (level == 0)

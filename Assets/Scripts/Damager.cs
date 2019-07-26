@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Damager : MonoBehaviour
 {
-    public GameObject effects;
-    HashSet<GameObject> hitHistory;
-    public bool playerSource;
-    public bool enemySource;
+    public GameObject effects; // particle effects for on hit
+    HashSet<GameObject> hitHistory; // prevents buggy multi hits
+    public bool playerSource; // if attack from player
+    public bool enemySource; // if attack from enemy
 
 
-    private void Start()
+    private void Awake()
     {
         hitHistory = new HashSet<GameObject>();
     }
@@ -47,16 +47,16 @@ public class Damager : MonoBehaviour
         // if player hitting enemy
         if(collision.CompareTag("EnemyHitbox") && playerSource)
         {
+            // spawns effects on enemy if it exists
             if(effects)
             {
                 Destroy(Instantiate(effects, collision.transform.position, Quaternion.identity), 3);
             }
+            // calculates the power for the attack (closer -> more knock back)
             Vector2 displacement = collision.transform.position - transform.parent.position;
             float inverseDisplacement = 1 / Mathf.Max(1, displacement.magnitude);
             float minInverseDisp = 1 / PlayerController.instance.range;
             float power = MyUtilities.Remap(Mathf.Max(inverseDisplacement, minInverseDisp), minInverseDisp, 1, 3, 15);
-            Debug.Log("Scale: " + 1 / Mathf.Max(1, displacement.magnitude));
-            Debug.Log("Power: " + power);
             collision.GetComponentInParent<Enemy>().TakeDamage(displacement.normalized, power);
         }
     }

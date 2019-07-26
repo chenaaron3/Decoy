@@ -6,11 +6,12 @@ public class EnemyAggro : MonoBehaviour
 {
     Enemy myEnemy;
 
-    private void Start()
+    private void Awake()
     {
         myEnemy = GetComponentInParent<Enemy>();
     }
 
+    // notifies the enemy script if player enters aggro range
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player"))
@@ -19,6 +20,7 @@ public class EnemyAggro : MonoBehaviour
         }
     }
 
+    // notifies the enemy script if player leaves aggro range
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))

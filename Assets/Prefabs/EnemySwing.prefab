@@ -304,7 +304,7 @@ MonoBehaviour:
   chargeTime: 2
   attackTime: 0.5
   rechargeTime: 1
-  maxHealth: 100
+  maxHealth: 3
   speed: 3
   swing: {fileID: 6084855457802858107}
 --- !u!58 &6791699942615437795

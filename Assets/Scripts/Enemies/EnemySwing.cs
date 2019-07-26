@@ -10,9 +10,9 @@ public class EnemySwing : Enemy
 
     protected override void ExtendedStart()
     {
-
     }
 
+    // moves fast towards player
     protected override IEnumerator Charge()
     {
         stunned = false;
@@ -21,6 +21,7 @@ public class EnemySwing : Enemy
         speed = normalSpeed;
     }
 
+    // swings weapon and stuns
     protected override IEnumerator Attack()
     {
         stunned = true;
@@ -29,6 +30,7 @@ public class EnemySwing : Enemy
         swing.SetActive(false);
     }
 
+    // unstuns
     protected override IEnumerator Recharge()
     {
         yield return new WaitForSeconds(rechargeTime);
@@ -36,6 +38,7 @@ public class EnemySwing : Enemy
         attacking = false;
     }
 
+    // removes swing object
     protected override void Reset()
     {
         base.Reset();
