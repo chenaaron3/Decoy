@@ -16,6 +16,7 @@ public class EnemyAttackRange : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            myEnemy.GainAggro(collision.gameObject);
             myEnemy.ChargeCall();
         }
     }

@@ -55,7 +55,7 @@ public class Damager : MonoBehaviour
             // calculates the power for the attack (closer -> more knock back)
             Vector2 displacement = collision.transform.position - transform.parent.position;
             float inverseDisplacement = 1 / Mathf.Max(1, displacement.magnitude);
-            float minInverseDisp = 1 / PlayerController.instance.range;
+            float minInverseDisp = 1 / PlayerController.range;
             float power = MyUtilities.Remap(Mathf.Max(inverseDisplacement, minInverseDisp), minInverseDisp, 1, 3, 15);
             collision.GetComponentInParent<Enemy>().TakeDamage(displacement.normalized, power);
         }

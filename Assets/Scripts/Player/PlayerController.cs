@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController instance;
+    public static float range;
 
     // components
     public GameObject clonePrefab;
@@ -20,7 +20,6 @@ public class PlayerController : MonoBehaviour
     float fadingDuration = .5f;
 
     // stats
-    public float range;
     float size;
     public float speed = 3;
     public float cloneDuration = 2;
@@ -32,11 +31,6 @@ public class PlayerController : MonoBehaviour
     bool stunned;
     public HashSet<GameObject> enemiesInRange;
     GameObject closestEnemy;
-
-    private void Awake()
-    {
-        instance = this;
-    }
 
     private void Start()
     {
@@ -91,7 +85,7 @@ public class PlayerController : MonoBehaviour
     // Triggers Ranged Attack
     void RangedAttack()
     {
-        if (myUI.RangedStacks > -1)
+        if (myUI.RangedStacks > 0)
         {
             weaponAnim.SetTrigger("RangedAttack");
             myUI.RangedStacks--;
@@ -102,7 +96,7 @@ public class PlayerController : MonoBehaviour
     // Triggers Melee Attack
     void MeleeAttack()
     {
-        if (myUI.MeleeStacks > -1)
+        if (myUI.MeleeStacks > 0)
         {
             weaponAnim.SetTrigger("MeleeAttack");
             myUI.MeleeStacks--;
@@ -132,9 +126,11 @@ public class PlayerController : MonoBehaviour
         stunned = true;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, 1 << LayerManager.TILE);
         Vector2 dest = hit ? hit.point - direction * size / 2 : (Vector2)transform.position + direction.normalized * distance;
-        while ((Vector2)transform.position != dest)
+        float time = 0;
+        while ((Vector2)transform.position != dest && time < .2f)
         {
             transform.position = Vector3.MoveTowards(transform.position, dest, speed * 5 * Time.deltaTime);
+            time += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
         stunned = false;
