@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public PlayerUI myUI;
     GameObject body;
+    CircleCollider2D col;
 
     // trail renderer
     public TrailRenderer tr;
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         myUI = GetComponent<PlayerUI>();
+        col = GetComponent<CircleCollider2D>();
         body = transform.Find("Graphics").gameObject;
         size = body.transform.localScale.x;
         range = transform.Find("AggroRange").GetComponent<CircleCollider2D>().radius;
@@ -55,7 +57,7 @@ public class PlayerController : MonoBehaviour
         // for translation
         Vector2 inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
         movingDirection = inputDirection.magnitude == 0 ? movingDirection : inputDirection;
-        RaycastHit2D moveHit = Physics2D.Raycast(transform.position, movingDirection, size / 2, 1 << LayerManager.TILE);
+        RaycastHit2D moveHit = Physics2D.Raycast(transform.position, movingDirection, size / 2, 1 << LayerManager.TILE | 1 << LayerManager.WATER);
         if (!moveHit)
         {
             transform.position += (Vector3)inputDirection * speed * Time.deltaTime;
@@ -85,23 +87,43 @@ public class PlayerController : MonoBehaviour
     // Triggers Ranged Attack
     void RangedAttack()
     {
+        // Regular
         if (myUI.RangedStacks > 0)
         {
             weaponAnim.SetTrigger("RangedAttack");
             myUI.RangedStacks--;
             StartCoroutine(MyUtilities.ScreenShake());
         }
+        // Special
+        else
+        {
+
+        }
     }
 
     // Triggers Melee Attack
     void MeleeAttack()
     {
+        // Regular
         if (myUI.MeleeStacks > 0)
         {
             weaponAnim.SetTrigger("MeleeAttack");
             myUI.MeleeStacks--;
             StartCoroutine(MyUtilities.ScreenShake());
         }
+        // Special
+        else
+        {
+            StartCoroutine(SpecialMelee());
+        }
+    }
+
+    IEnumerator SpecialMelee()
+    {
+        GameObject bomb = transform.Find("Bomb").gameObject;
+        bomb.SetActive(true);
+        yield return null;
+        bomb.SetActive(false);
     }
 
     // Instantiates a clone that dies after a duration
@@ -124,6 +146,7 @@ public class PlayerController : MonoBehaviour
     {
         StartCoroutine(FadeInTrailRenderer());
         stunned = true;
+        col.isTrigger = true;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, 1 << LayerManager.TILE);
         Vector2 dest = hit ? hit.point - direction * size / 2 : (Vector2)transform.position + direction.normalized * distance;
         float time = 0;
@@ -133,6 +156,7 @@ public class PlayerController : MonoBehaviour
             time += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
+        col.isTrigger = false;
         stunned = false;
         StartCoroutine(FadeOutTrailRenderer());
     }

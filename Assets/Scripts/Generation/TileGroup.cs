@@ -13,7 +13,6 @@ public class TileGroup : MonoBehaviour
     public int level;
     public float spreadRate;
     public GameObject tileGroupPrefab;
-    public GameObject tileMember;
     List<Vector2[]> extensions; // top, right, down, left
 
     public void Initialize(int length, int level, float spreadRate)
@@ -27,8 +26,8 @@ public class TileGroup : MonoBehaviour
         AssignAttributes(length, level, spreadRate);
         CreateExtensions();
 
-        // prevents repeat tile
-        CheckOverlap();
+        // adds as center position
+        bool previouslyCenter = centerPositions.Contains(transform.position);
         centerPositions.Add(transform.position);
 
         // renderers extensions and body
@@ -39,24 +38,11 @@ public class TileGroup : MonoBehaviour
         }
         else
         {
-            // ignores this node if not affected
-            centerPositions.Remove(transform.position);
-        }
-    }
-
-    // Prevents duplicate tiles
-    void CheckOverlap()
-    {
-        // if on an existing perimeter position
-        if(perimeterPositions.Contains(transform.position) || bodyPositions.Contains(transform.position))
-        {
-            // turn off collider
-            BoxCollider2D col = GetComponent<BoxCollider2D>();
-            col.enabled = false;
-            // raycast onto perimeter collider
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, .1f, 1 << LayerManager.TILE);
-            Destroy(hit.collider.gameObject);
-            col.enabled = true;
+            if(!previouslyCenter)
+            {
+                // ignores this node if not affected
+                centerPositions.Remove(transform.position);
+            }
         }
     }
 
@@ -110,7 +96,6 @@ public class TileGroup : MonoBehaviour
                 {
                     impacted = true;
                     perimeterPositions.Add(component);
-                    GameObject tile = Instantiate(tileMember, component, Quaternion.identity, transform.parent);
                 }
             }
         }
@@ -136,15 +121,6 @@ public class TileGroup : MonoBehaviour
                     if (perimeterPositions.Contains(pos))
                     {
                         perimeterPositions.Remove(pos);
-                    }
-                    // if cannot recycle perimeter tile
-                    else
-                    {
-                        // if not center tile
-                        if ((Vector2)transform.position != pos)
-                        {
-                            GameObject tile = Instantiate(tileMember, pos, Quaternion.identity, transform.parent);
-                        }
                     }
                 }
             }

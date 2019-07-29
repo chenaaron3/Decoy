@@ -104,7 +104,7 @@ public abstract class Enemy : MonoBehaviour
     public void LoseAggro()
     {
         // if player leaves and not dead
-        if(target != null && Health > 0)
+        if(target != null && target.CompareTag("Player") && Health > 0)
         {
             Reset();
             Bulge();
@@ -254,6 +254,8 @@ public abstract class Enemy : MonoBehaviour
     // takes damage and applies knock back
     public void TakeDamage(Vector2 direction, float power)
     {
+        Reset();
+        ColorChange(Settings.instance.unaggroColor, 0f);
         Health--;
         KnockBack(direction, power);
     }

@@ -51,6 +51,7 @@ public class MyUtilities : MonoBehaviour
             transform.localScale = Vector2.MoveTowards(transform.localScale, target, speed * Time.deltaTime);
             yield return new WaitForEndOfFrame();
         }
+        transform.localScale = target;
     }
 
     // Changes the color of a sprite renderer to a target in a given time
@@ -62,6 +63,7 @@ public class MyUtilities : MonoBehaviour
             sr.color = Color.Lerp(startingColor, endingColor, step);
             yield return null;
         }
+        sr.color = endingColor;
     }
 
     // Changes the fill of an image
@@ -73,6 +75,7 @@ public class MyUtilities : MonoBehaviour
             i.fillAmount = Mathf.Lerp(i.fillAmount, val, step);
             yield return null;
         }
+        i.fillAmount = val;
     }
 
     public static IEnumerator ScreenShake(float shakeAmt = .1f, float shakeTime = .2f)
