@@ -9,6 +9,8 @@ public abstract class Enemy : MonoBehaviour
     protected SpriteRenderer sr; // sprite renderer on graphics
     protected Rigidbody2D rb; // dynamic rigid body
     public Image healthImage; // health UI
+    public Collider2D attackCollider; // trigger that detects when to attack
+    public Collider2D aggroCollider; // trigger that detects when to aggro
 
     // stats
     public float chargeTime; // time to charge
@@ -16,9 +18,11 @@ public abstract class Enemy : MonoBehaviour
     public float rechargeTime; // recharging time
     public float maxHealth; // maximum health
     public float speed; // movement speed
+    float resensePer = 60; // number of frames until recheck attack sense
 
     // state
-    protected bool stunned = false; // cannot move if stunned
+    int resenseCount;
+    protected bool stunned; // cannot move if stunned
     protected bool attacking; // prevents double attacking
     protected GameObject target; // player target
         // keep track of routines to prevent overlapping
@@ -58,6 +62,18 @@ public abstract class Enemy : MonoBehaviour
     protected abstract IEnumerator Attack();
     protected abstract IEnumerator Recharge();
 
+    private void OnEnable()
+    {
+        PlayerController.OnStealth += RespondToStealth;
+        PlayerController.OnReveal += RespondToReveal;
+    }
+
+    private void OnDisable()
+    {
+        PlayerController.OnStealth -= RespondToStealth;
+        PlayerController.OnReveal -= RespondToReveal;
+    }
+
     private void Start()
     {
         // used for all enemies       
@@ -69,6 +85,8 @@ public abstract class Enemy : MonoBehaviour
 
         // used for all enemies
         Health = maxHealth;
+
+        CheckSenses();
     }
 
     private void Update()
@@ -82,6 +100,12 @@ public abstract class Enemy : MonoBehaviour
         if (target != null)
         {
             transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
+            resenseCount++;
+            if(resenseCount % resensePer == 0)
+            {
+                Debug.Log("Resensing!!");
+                CheckAttackSense();
+            }
         }
 
         // Maybe use AStar later on
@@ -90,6 +114,12 @@ public abstract class Enemy : MonoBehaviour
     // Called when player enters aggro range
     public void GainAggro(GameObject target)
     {
+        // if player stealthed
+        if(target.CompareTag("Player") && target.GetComponent<PlayerController>().stealthed)
+        {
+            return;
+        }
+
         // if not stunned and not dead
         if (!stunned && this.target == null && Health > 0)
         {
@@ -101,10 +131,10 @@ public abstract class Enemy : MonoBehaviour
     }
 
     // Called when player leaves aggro range
-    public void LoseAggro()
+    public void LoseAggro(bool force = false)
     {
         // if player leaves and not dead
-        if(target != null && target.CompareTag("Player") && Health > 0)
+        if(force || (target != null && target.CompareTag("Player") && Health > 0))
         {
             Reset();
             Bulge();
@@ -119,7 +149,7 @@ public abstract class Enemy : MonoBehaviour
     public void ChargeCall()
     {
         // start attack phase if not already attacking
-        if (!attacking)
+        if (!attacking && !stunned)
         {
             attacking = true;
             StartCoroutine(Charge());
@@ -133,8 +163,15 @@ public abstract class Enemy : MonoBehaviour
     // Attack Phase
     void AttackCall()
     {
-        StartCoroutine(Attack());
-        Invoke("RechargeCall", attackTime);
+        if(target == null)
+        {
+            LoseAggro(true);
+        }
+        else
+        {
+            StartCoroutine(Attack());
+            Invoke("RechargeCall", attackTime);
+        }
     }
 
     // Recharge Phase
@@ -144,6 +181,7 @@ public abstract class Enemy : MonoBehaviour
         // changes color from attack to aggro
         ColorChange(Settings.instance.aggroColor, rechargeTime);
         Bulge(rechargeTime);
+        Invoke("CheckAttackSense", rechargeTime);
     }
 
     // Manages Color Changes
@@ -258,5 +296,36 @@ public abstract class Enemy : MonoBehaviour
         ColorChange(Settings.instance.unaggroColor, 0f);
         Health--;
         KnockBack(direction, power);
+    }
+
+    // resets the trigger colliders
+    void CheckSenses()
+    {
+        CheckAttackSense();
+        CheckAggroSense();
+    }
+
+    void CheckAttackSense()
+    {
+        attackCollider.enabled = false;
+        attackCollider.enabled = true;
+    }
+
+    void CheckAggroSense()
+    {
+        aggroCollider.enabled = false;
+        aggroCollider.enabled = true;
+    }
+
+    // enemy response to player entering stealth
+    void RespondToStealth()
+    {
+        LoseAggro();
+    }
+
+    // enemy response to player exiting stealth
+    void RespondToReveal()
+    {
+        CheckSenses();
     }
 }

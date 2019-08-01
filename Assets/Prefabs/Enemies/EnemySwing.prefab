@@ -301,6 +301,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthImage: {fileID: 6791699942126970973}
+  attackCollider: {fileID: 6791699942034548317}
+  aggroCollider: {fileID: 6791699942707568571}
   chargeTime: 2
   attackTime: 0.5
   rechargeTime: 1

@@ -12,9 +12,9 @@ public class EnemyAttackRange : MonoBehaviour
     }
 
     // while player is inside attack range, attempt to attack
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && myEnemy != null)
         {
             myEnemy.GainAggro(collision.gameObject);
             myEnemy.ChargeCall();

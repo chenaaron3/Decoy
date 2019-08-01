@@ -5,6 +5,10 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public static float range;
+    public delegate void Stealth();
+    public static Stealth OnStealth;
+    public delegate void Reveal();
+    public static Reveal OnReveal;
 
     // components
     public GameObject clonePrefab;
@@ -30,6 +34,7 @@ public class PlayerController : MonoBehaviour
     Vector2 movingDirection;
     Vector2 lookingDirection;
     bool stunned;
+    public bool stealthed;
     public HashSet<GameObject> enemiesInRange;
     GameObject closestEnemy;
 
@@ -90,6 +95,7 @@ public class PlayerController : MonoBehaviour
         // Regular
         if (myUI.RangedStacks > 0)
         {
+            ExitStealth();
             weaponAnim.SetTrigger("RangedAttack");
             myUI.RangedStacks--;
             StartCoroutine(MyUtilities.ScreenShake());
@@ -107,6 +113,7 @@ public class PlayerController : MonoBehaviour
         // Regular
         if (myUI.MeleeStacks > 0)
         {
+            ExitStealth();
             weaponAnim.SetTrigger("MeleeAttack");
             myUI.MeleeStacks--;
             StartCoroutine(MyUtilities.ScreenShake());
@@ -148,7 +155,21 @@ public class PlayerController : MonoBehaviour
         stunned = true;
         col.isTrigger = true;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, 1 << LayerManager.TILE);
-        Vector2 dest = hit ? hit.point - direction * size / 2 : (Vector2)transform.position + direction.normalized * distance;
+        Vector2 dest = transform.position;
+        if (hit)
+        {
+            dest = hit.point - direction * size / 2;
+        }
+        else
+        {
+            dest = (Vector2)transform.position + direction.normalized * distance;
+            hit = Physics2D.Raycast(dest, Vector2.zero, .1f, 1 << LayerManager.WATER);
+            while(hit)
+            {
+                dest += direction * .1f;
+                hit = Physics2D.Raycast(dest, Vector2.zero, .1f, 1 << LayerManager.WATER);
+            }
+        }
         float time = 0;
         while ((Vector2)transform.position != dest && time < .2f)
         {
@@ -197,6 +218,7 @@ public class PlayerController : MonoBehaviour
         tr.enabled = false;
     }
 
+    // assigns the closest enemy every update
     public void AssignClosestEnemy()
     {
         if(enemiesInRange.Count == 0)
@@ -215,6 +237,23 @@ public class PlayerController : MonoBehaviour
                     closestEnemy = go;
                 }
             }
+        }
+    }
+
+    // go into stealth
+    public void EnterStealth()
+    {
+        OnStealth?.Invoke();
+        stealthed = true;
+    }
+
+    // come out of stealth
+    public void ExitStealth()
+    {
+        if(stealthed)
+        {
+            stealthed = false;
+            OnReveal?.Invoke();
         }
     }
 }

@@ -99,6 +99,27 @@ public class MyUtilities : MonoBehaviour
         Camera.main.transform.localPosition = initPos;
     }
 
+    public static IEnumerator ShakeObject(GameObject obj, float shakeAmt = .1f, float shakeTime = .2f)
+    {
+        Vector3 initPos = obj.transform.position;
+        float time = 0;
+        while (time < shakeTime)
+        {
+            float shakeMultiplyer = (1 - time / shakeTime);
+            Vector3 pp = obj.transform.position;
+            float quakeAmt = shakeMultiplyer * shakeAmt * (Random.value * 2 - 1);
+            pp.y += quakeAmt;
+            quakeAmt = shakeAmt * (Random.value * 2 - 1);
+            pp.x += quakeAmt;
+            obj.transform.position = pp;
+            yield return new WaitForEndOfFrame();
+            time += Time.fixedDeltaTime;
+            obj.transform.position = initPos;
+            yield return new WaitForEndOfFrame();
+        }
+        obj.transform.position = initPos;
+    }
+
     public static float Distance(GameObject o1, GameObject o2)
     {
         return (o1.transform.position - o2.transform.position).magnitude;

@@ -10,7 +10,7 @@ public class Damager : MonoBehaviour
     public bool enemySource; // if attack from enemy
 
 
-    private void Awake()
+    private void Start()
     {
         hitHistory = new HashSet<GameObject>();
     }
@@ -23,7 +23,7 @@ public class Damager : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // ignore if history already contains
-        if(hitHistory.Contains(collision.gameObject))
+        if(hitHistory != null && hitHistory.Contains(collision.gameObject))
         {
             return;
         }
