@@ -62,6 +62,7 @@ public class FloorCreation : MonoBehaviour
         }
         FillFloor();
         FillCenters();
+        GetComponent<MapCreation>().CreateMap();
     }
 
     // Clears the floor from model and view
