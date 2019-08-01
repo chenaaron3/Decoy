@@ -734,7 +734,7 @@ MonoBehaviour:
   enemies:
   - {fileID: 6791699942615437790, guid: 0254829afcacf6140b56e8dd4ee5679c, type: 3}
   - {fileID: 5574889317016840795, guid: b44f49ec5c1f7844daf8b6a27afeaf0d, type: 3}
-  enemyRate: 1
+  enemyRate: 0.2
   obstacleRate: 0.25
 --- !u!4 &478509266
 Transform:

@@ -6,18 +6,23 @@ public class EnemySlash : Enemy
 {
     Vector2 direction;
     GameObject damager;
+    GameObject pin;
 
     protected override void ExtendedStart()
     {
         damager = transform.Find("Damager").gameObject;
+        pin = transform.Find("Pin").gameObject;
+        pin.SetActive(false);
     }
 
     protected override IEnumerator Charge()
     {
         // stops to get ready to charge
         yield return new WaitForSeconds(chargeTime - .5f);
+        pin.SetActive(true);
+        direction = (target.transform.position - transform.position).normalized;
+        pin.transform.right = direction;
         stunned = true;
-        direction = target.transform.position - transform.position;
     }
 
     protected override IEnumerator Attack()
@@ -29,10 +34,11 @@ public class EnemySlash : Enemy
         float time = 0;
         while ((Vector2)transform.position != dest)
         {
-            transform.position = Vector3.MoveTowards(transform.position, dest, speed * 7 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, dest, speed * 5 * Time.deltaTime);
             time += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
+        pin.SetActive(false);
         yield return new WaitForSeconds(attackTime - time);
         stunned = false;
         damager.gameObject.SetActive(false);
@@ -42,5 +48,11 @@ public class EnemySlash : Enemy
     {
         yield return new WaitForSeconds(rechargeTime);
         attacking = false;
+    }
+
+    protected override void Reset()
+    {
+        base.Reset();
+        pin.SetActive(false);
     }
 }
