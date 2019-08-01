@@ -287,6 +287,7 @@ public abstract class Enemy : MonoBehaviour
         knockBackRoutine = null;
         colorChangeRoutine = null;
         rb.velocity = Vector2.zero;
+        Time.timeScale = 1;
     }
 
     // takes damage and applies knock back
