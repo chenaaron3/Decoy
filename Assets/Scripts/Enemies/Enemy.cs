@@ -99,11 +99,12 @@ public abstract class Enemy : MonoBehaviour
         // Movement
         if (target != null)
         {
+            MapCreation.instance.MarkOnDynamicMap(gameObject, Settings.instance.enemyColor);
             transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
             resenseCount++;
             if(resenseCount % resensePer == 0)
             {
-                Debug.Log("Resensing!!");
+                rb.velocity = Vector2.zero;
                 CheckAttackSense();
             }
         }
@@ -260,6 +261,8 @@ public abstract class Enemy : MonoBehaviour
     // Resets everything and dies
     void Die()
     {
+        // removes marking
+        MapCreation.instance.RemoveMarkingTracker(gameObject);
         Reset();
         // dont attack after ur dead
         stunned = true;

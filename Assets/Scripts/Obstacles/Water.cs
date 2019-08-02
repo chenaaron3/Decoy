@@ -9,12 +9,13 @@ public class Water : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(MyUtilities.DelayedMarkOnStaticMap(transform.position, Settings.instance.waterColor));
         ripple = transform.Find("Ripple").gameObject;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Player"))
+        if(ripple && collision.CompareTag("Player"))
         {
             Ripple();
         }

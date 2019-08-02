@@ -54,6 +54,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        MapCreation.instance.UpdateMapTextures(gameObject);
+
         if (stunned)
         {
             return;
@@ -63,7 +65,7 @@ public class PlayerController : MonoBehaviour
         Vector2 inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
         movingDirection = inputDirection.magnitude == 0 ? movingDirection : inputDirection;
         RaycastHit2D moveHit = Physics2D.Raycast(transform.position, movingDirection, size / 2, 1 << LayerManager.TILE | 1 << LayerManager.WATER);
-        if (!moveHit)
+        if (!moveHit && inputDirection != Vector2.zero)
         {
             transform.position += (Vector3)inputDirection * speed * Time.deltaTime;
         }

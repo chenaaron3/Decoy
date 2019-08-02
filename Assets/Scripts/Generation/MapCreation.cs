@@ -1,15 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapCreation : MonoBehaviour
 {
+    public static MapCreation instance;
+
+    // for dynamic markings
+    Dictionary<GameObject, Vector2Int> markings;
+
+    // Image Components
+    public RawImage staticImage;
+    public RawImage dynamicImage;
+    public RawImage fogImage;
+
+    // arrays used to store information about all blocks
     Color[,] staticMap; // black: wall, blue: water, green: bush
     Color[,] dynamicMap; // red: enemies, white: player
     bool[,] fogMap; // gray true: seen (alpha = 0), false: not seen (alpha = 255)
-    Vector2Int windowSize = new Vector2Int(40, 30);
+    // textures to be rendered on the UI (all update when player moves)
+    Texture2D staticTexture;
+    Texture2D dynamicTexture; // update when enemy moves
+    Texture2D fogTexture;
+    // how much the map shows of the world (width, height)
+    Vector2Int windowSize = new Vector2Int(21, 21);
+    // how big the world is (width, height)
     Vector2Int mapSize;
+    // used to translate world position to array coordinates
     Vector2Int referencePoint;
+    Vector2Int bottomReferencePoint;
 
     //(0, 0)
     //+--------------+
@@ -18,27 +38,145 @@ public class MapCreation : MonoBehaviour
     //|              |
     //+--------------+ (mapSize.x, mapSize.y)
 
-    public void CreateMap()
+    private void Awake()
     {
-        InitializeMaps();
+        instance = this;
     }
 
+    // called from floor generation
+    public void CreateMap()
+    {
+        markings = new Dictionary<GameObject, Vector2Int>();
+        InitializeMaps();
+        ConfigureTextures();
+    }
+
+    // initializes the correct sizes and sets the reference point
     void InitializeMaps()
     {
         Vector2 topLeft = getTopLeft();
         Vector2 bottomRight = getBottomRight();
         // dimensions of map + window margin
         mapSize = new Vector2Int((int)(bottomRight.x - topLeft.x + 1 + windowSize.x),
-                              (int)(topLeft.y - bottomRight.x + 1 + windowSize.y));
+                              (int)(topLeft.y - bottomRight.y + 1 + windowSize.y));
+        // initializes arrays based on map size
         staticMap = new Color[mapSize.x, mapSize.y];
         dynamicMap = new Color[mapSize.x, mapSize.y];
         fogMap = new bool[mapSize.x, mapSize.y];
+        InitializeArrays();
+        // sets reference point (top left and corner margin)
         referencePoint = new Vector2Int((int)(topLeft.x - windowSize.x / 2), (int)(topLeft.y + windowSize.y / 2));
-        Debug.Log("Map Size: " + mapSize);
-        Debug.Log("TopLeft: " + topLeft);
-        Debug.Log("Reference: " + referencePoint);
+        bottomReferencePoint = new Vector2Int((int)(referencePoint.x + mapSize.x), (int)(referencePoint.y - mapSize.y));
     }
 
+    // initializes the values for the arrays
+    void InitializeArrays()
+    {
+        for(int row = 0; row < mapSize.x; row++)
+        {
+            for (int col = 0; col < mapSize.y; col++)
+            {
+                staticMap[row, col] = Settings.instance.waterColor;
+                dynamicMap[row, col] = Color.clear;
+                fogMap[row, col] = false;
+            }
+        }
+    }
+
+    // configures the textures
+    void ConfigureTextures()
+    {
+        // initializes textures
+        staticTexture = new Texture2D(windowSize.x, windowSize.y);
+        dynamicTexture = new Texture2D(windowSize.x, windowSize.y);
+        fogTexture = new Texture2D(windowSize.x, windowSize.y);
+        staticTexture.filterMode = FilterMode.Point;
+        dynamicTexture.filterMode = FilterMode.Point;
+        fogTexture.filterMode = FilterMode.Point;
+        staticImage.texture = staticTexture;
+        dynamicImage.texture = dynamicTexture;
+        fogImage.texture = fogTexture;
+    }
+
+    // shifts the window based on the player's position
+    public void UpdateMapTextures(GameObject player)
+    {
+        MarkOnDynamicMap(player, Settings.instance.playerColor);
+        Vector2Int playerCoordinate = WorldToMap(player.transform.position);
+        Vector2Int windowCorner = new Vector2Int(playerCoordinate.x - windowSize.x / 2, playerCoordinate.y - windowSize.y / 2);
+
+        // creates the texture window
+        for (int row = 0; row < windowSize.y; row++)
+        {
+            for (int col = 0; col < windowSize.x; col++)
+            {
+                staticTexture.SetPixel(col, row, staticMap[windowCorner.x + col, windowCorner.y + row]);
+                dynamicTexture.SetPixel(col, row, dynamicMap[windowCorner.x + col, windowCorner.y + row]);
+                fogTexture.SetPixel(col, row, fogMap[windowCorner.x + col, windowCorner.y + row] ? Settings.instance.fogColor : Color.clear);
+            }
+        }
+        // applies pixels to texture
+        staticTexture.Apply();
+        dynamicTexture.Apply();
+        fogTexture.Apply();
+    }
+
+    // makes a marking on the static map
+    public void MarkOnStaticMap(Vector2 position, Color color)
+    {
+        Vector2Int coordinate = WorldToMap(position);
+        staticMap[coordinate.x, coordinate.y] = color;
+    }
+
+    // makes a marking on the dynamic map
+    public void MarkOnDynamicMap(GameObject obj, Color color)
+    {
+        Vector2Int coordinate = WorldToMap(obj.transform.position);
+        // removes old markings if had one
+        if (markings.ContainsKey(obj))
+        {
+            Vector2Int previousMarking = markings[obj];
+            dynamicMap[previousMarking.x, previousMarking.y] = Color.clear;
+        }
+        // if first time marking for this object
+        else
+        {
+            markings.Add(obj, coordinate);
+        }
+        // records marking
+        markings[obj] = coordinate;
+        dynamicMap[coordinate.x, coordinate.y] = color;
+    }
+
+    public void RemoveMarkingTracker(GameObject obj)
+    {
+        // if the object had a tracker
+        if(markings.ContainsKey(obj))
+        {
+            // remove the last marking
+            Vector2Int previousMarking = markings[obj];
+            dynamicMap[previousMarking.x, previousMarking.y] = Color.clear;
+            // remove from tracker
+            markings.Remove(obj);
+        }
+    }
+
+    // input (x, y)
+    // gets the (col, row) coordinates of map given world position
+    Vector2Int WorldToMap(Vector2 worldPosition)
+    {
+        Vector2Int worldCoordinate = Vector2Int.RoundToInt(worldPosition);
+        return new Vector2Int(worldCoordinate.x - referencePoint.x, referencePoint.y - worldCoordinate.y);
+    }
+
+    // inputs (col, row)
+    // outputs (x, y)
+    Vector2 MapToWorld(Vector2Int mapCoordinates)
+    {
+        return new Vector2(referencePoint.x + mapCoordinates.x, referencePoint.y - mapCoordinates.y);
+    }
+
+    // takes the top left corner of the perimeter nodes
     Vector2 getTopLeft()
     {
         int minX = int.MaxValue;
@@ -49,7 +187,7 @@ public class MapCreation : MonoBehaviour
             {
                 minX = (int)pos.x;
             }
-            if(pos.y > maxY)
+            if (pos.y > maxY)
             {
                 maxY = (int)pos.y;
             }
@@ -57,6 +195,7 @@ public class MapCreation : MonoBehaviour
         return new Vector2(minX, maxY);
     }
 
+    // takes the bottom right corner of the perimeter nodes
     Vector2 getBottomRight()
     {
         int maxX = int.MinValue;

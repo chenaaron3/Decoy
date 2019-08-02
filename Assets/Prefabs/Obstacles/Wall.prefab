@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5518948065512696909}
   - component: {fileID: 3389540802333004162}
   - component: {fileID: 2331235136856629288}
+  - component: {fileID: 7646654733407409531}
   m_Layer: 8
   m_Name: Wall
   m_TagString: TileMember
@@ -128,3 +129,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &7646654733407409531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5518948065512696910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24925f5f2469ff847919d4f643b0b7ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

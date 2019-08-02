@@ -78,6 +78,7 @@ public class MyUtilities : MonoBehaviour
         i.fillAmount = val;
     }
 
+    // shakes the camera
     public static IEnumerator ScreenShake(float shakeAmt = .1f, float shakeTime = .2f)
     {
         Vector3 initPos = Camera.main.transform.localPosition;
@@ -99,6 +100,7 @@ public class MyUtilities : MonoBehaviour
         Camera.main.transform.localPosition = initPos;
     }
 
+    // shakes an object
     public static IEnumerator ShakeObject(GameObject obj, float shakeAmt = .1f, float shakeTime = .2f)
     {
         Vector3 initPos = obj.transform.position;
@@ -120,13 +122,22 @@ public class MyUtilities : MonoBehaviour
         obj.transform.position = initPos;
     }
 
+    // calculates distance between 2 objects
     public static float Distance(GameObject o1, GameObject o2)
     {
         return (o1.transform.position - o2.transform.position).magnitude;
     }
 
+    // remaps one range to another
     public static float Remap(float value, float from1, float to1, float from2, float to2)
     {
         return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+    }
+
+    // waits for a frame then marks
+    public static IEnumerator DelayedMarkOnStaticMap(Vector2 position, Color color)
+    {
+        yield return new WaitForEndOfFrame();
+        MapCreation.instance.MarkOnStaticMap(position, color);
     }
 }

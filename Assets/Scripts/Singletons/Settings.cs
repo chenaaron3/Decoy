@@ -15,6 +15,15 @@ public class Settings : MonoBehaviour
     public Color aggroColor;
     public Color attackColor;
 
+    [Header("Map Settings")]
+    public Color landColor;
+    public Color wallColor;
+    public Color waterColor;
+    public Color bushColor;
+    public Color fogColor;
+    public Color playerColor;
+    public Color enemyColor;
+
     private void Awake()
     {
         instance = this;

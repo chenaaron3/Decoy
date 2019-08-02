@@ -18,8 +18,11 @@ public class FloorCreation : MonoBehaviour
     public float enemyRate;
     public float obstacleRate;
 
+    MapCreation mc;
+
     private void Start()
     {
+        mc = GetComponent<MapCreation>();
         GenerateLegitimateFloor();
     }
 
@@ -60,9 +63,9 @@ public class FloorCreation : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        GetComponent<MapCreation>().CreateMap();
         FillFloor();
         FillCenters();
-        GetComponent<MapCreation>().CreateMap();
     }
 
     // Clears the floor from model and view
@@ -87,6 +90,7 @@ public class FloorCreation : MonoBehaviour
         }
         foreach (Vector2 bodyPos in TileGroup.bodyPositions)
         {
+            StartCoroutine(MyUtilities.DelayedMarkOnStaticMap(bodyPos, Settings.instance.landColor));
             // body that is not center
             if (!TileGroup.centerPositions.Contains(bodyPos))
             {
