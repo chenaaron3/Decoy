@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Bush : MonoBehaviour
 {
-    public GameObject groundTile;
     Coroutine bulgeRoutine;
     Coroutine shakeRoutine;
 
     private void Start()
     {
-        Instantiate(groundTile, transform.position, Quaternion.identity, transform.parent);
+        Instantiate(Settings.instance.groundPrefab, transform.position, Quaternion.identity, transform.parent);
         StartCoroutine(MyUtilities.DelayedMarkOnStaticMap(transform.position, Settings.instance.bushColor));
     }
 

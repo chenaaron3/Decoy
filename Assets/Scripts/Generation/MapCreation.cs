@@ -28,8 +28,8 @@ public class MapCreation : MonoBehaviour
     // how big the world is (width, height)
     Vector2Int mapSize;
     // used to translate world position to array coordinates
-    Vector2Int referencePoint;
-    Vector2Int bottomReferencePoint;
+    public Vector2Int referencePoint;
+    public Vector2Int bottomReferencePoint;
 
     //(0, 0)
     //+--------------+
@@ -72,7 +72,7 @@ public class MapCreation : MonoBehaviour
     // initializes the values for the arrays
     void InitializeArrays()
     {
-        for(int row = 0; row < mapSize.x; row++)
+        for (int row = 0; row < mapSize.x; row++)
         {
             for (int col = 0; col < mapSize.y; col++)
             {
@@ -102,7 +102,9 @@ public class MapCreation : MonoBehaviour
     public void UpdateMapTextures(GameObject player)
     {
         MarkOnDynamicMap(player, Settings.instance.playerColor);
+        // (col, row) of player
         Vector2Int playerCoordinate = WorldToMap(player.transform.position);
+        // (col, row) of window corner
         Vector2Int windowCorner = new Vector2Int(playerCoordinate.x - windowSize.x / 2, playerCoordinate.y - windowSize.y / 2);
 
         // creates the texture window
@@ -110,6 +112,7 @@ public class MapCreation : MonoBehaviour
         {
             for (int col = 0; col < windowSize.x; col++)
             {
+                // assigns map's snippet into the texture
                 staticTexture.SetPixel(col, row, staticMap[windowCorner.x + col, windowCorner.y + row]);
                 dynamicTexture.SetPixel(col, row, dynamicMap[windowCorner.x + col, windowCorner.y + row]);
                 fogTexture.SetPixel(col, row, fogMap[windowCorner.x + col, windowCorner.y + row] ? Settings.instance.fogColor : Color.clear);
@@ -151,7 +154,7 @@ public class MapCreation : MonoBehaviour
     public void RemoveMarkingTracker(GameObject obj)
     {
         // if the object had a tracker
-        if(markings.ContainsKey(obj))
+        if (markings.ContainsKey(obj))
         {
             // remove the last marking
             Vector2Int previousMarking = markings[obj];

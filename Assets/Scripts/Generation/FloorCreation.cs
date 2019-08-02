@@ -18,11 +18,8 @@ public class FloorCreation : MonoBehaviour
     public float enemyRate;
     public float obstacleRate;
 
-    MapCreation mc;
-
     private void Start()
     {
-        mc = GetComponent<MapCreation>();
         GenerateLegitimateFloor();
     }
 
@@ -63,9 +60,12 @@ public class FloorCreation : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        // creates an empty map that is ready to be marked
         GetComponent<MapCreation>().CreateMap();
-        FillFloor();
+        // fill objects that mark on map
         FillCenters();
+        FillFloor();
+        FillOcean();
     }
 
     // Clears the floor from model and view
@@ -126,6 +126,24 @@ public class FloorCreation : MonoBehaviour
             {
                 // create floor tile
                 Instantiate(groundTile, centerPos, Quaternion.identity, transform);
+            }
+        }
+    }
+
+    // Fills the rest of nulls with ocean water
+    void FillOcean()
+    {
+        MapCreation mc = MapCreation.instance;
+        for (int x = mc.referencePoint.x; x < mc.bottomReferencePoint.x; x++)
+        {
+            for (int y = mc.referencePoint.y; y > mc.bottomReferencePoint.y; y--)
+            {
+                Vector2 check = new Vector2(x, y);
+                // if is a tile that is neither perimeter or body
+                if (!TileGroup.perimeterPositions.Contains(check) && !TileGroup.bodyPositions.Contains(check))
+                {
+                    Instantiate(Settings.instance.oceanPrefab, check, Quaternion.identity, transform);
+                }
             }
         }
     }

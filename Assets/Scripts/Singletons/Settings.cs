@@ -24,6 +24,13 @@ public class Settings : MonoBehaviour
     public Color playerColor;
     public Color enemyColor;
 
+    [Header("Prefabs")]
+    public GameObject oceanPrefab;
+    public GameObject groundPrefab;
+    public GameObject waterPrefab;
+    public GameObject wallPrefab;
+    public GameObject bushPrefab;
+
     private void Awake()
     {
         instance = this;

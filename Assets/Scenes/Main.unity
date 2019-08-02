@@ -751,6 +751,16 @@ MonoBehaviour:
   fogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   playerColor: {r: 1, g: 1, b: 0, a: 1}
   enemyColor: {r: 1, g: 0, b: 0, a: 1}
+  oceanPrefab: {fileID: 8364480636473348942, guid: fe5d56971720aaa4dae49fec13840b4a,
+    type: 3}
+  groundPrefab: {fileID: 6740521992581475487, guid: 9e13c3175e13c4f438ae3ed5ef1ef991,
+    type: 3}
+  waterPrefab: {fileID: 8364480636473348942, guid: da01cd67cfac29144aa7b4cc0731e26c,
+    type: 3}
+  wallPrefab: {fileID: 5518948065512696910, guid: 3594a1cebc6733c4993c5a2e2abcf587,
+    type: 3}
+  bushPrefab: {fileID: 2193024028629927161, guid: 929b2e58b7eba1042b248e9f2616f463,
+    type: 3}
 --- !u!114 &478509265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -768,7 +778,7 @@ MonoBehaviour:
   blockSize: 3
   levels: 10
   spreadRate: 0.6
-  perimeterTile: {fileID: 5518948065512696910, guid: 3594a1cebc6733c4993c5a2e2abcf587,
+  perimeterTile: {fileID: 2680435708739424318, guid: 7e9577345c2ca2b429e61f594145f0d7,
     type: 3}
   groundTile: {fileID: 6740521992581475487, guid: 9e13c3175e13c4f438ae3ed5ef1ef991,
     type: 3}
