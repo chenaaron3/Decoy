@@ -140,4 +140,56 @@ public class MyUtilities : MonoBehaviour
         yield return new WaitForEndOfFrame();
         MapCreation.instance.MarkOnStaticMap(position, color);
     }
+
+    public static Vector2[] GetPixelCircle(Vector2 origin, int size)
+    {
+        int copyIndex = 0;
+        Vector2[] res = new Vector2[CalculateSize(size)];
+        Vector2[] longLine = GetHorizontalPixelLine(origin, 2 * size + 1);
+        copyIndex = ArrayCopy(longLine, res, copyIndex);
+        int offset = 1; // vertical offset
+        for(int j = 2 * size - 1; j > 0; j -=2) // j is length of line
+        {
+            // lines above
+            copyIndex = ArrayCopy(GetHorizontalPixelLine(origin + new Vector2(0, offset), j), res, copyIndex);
+            // lines below
+            copyIndex = ArrayCopy(GetHorizontalPixelLine(origin + new Vector2(0, -offset), j), res, copyIndex);
+            offset++;
+        }
+        return res;
+    }
+
+    // copies a smaller source array into a larger dest array starting at startIndex
+    // returns new copy index
+    private static int ArrayCopy(Vector2[] source, Vector2[] dest, int startIndex)
+    {
+        for(int j = 0; j < source.Length; j++)
+        {
+            dest[startIndex + j] = source[j];
+        }
+        return startIndex + source.Length;
+    }
+
+    private static Vector2[] GetHorizontalPixelLine(Vector2 origin, int length)
+    {
+        Vector2[] res = new Vector2[length];
+        res[0] = origin;
+        for (int j = 1; j <= length / 2; j++)
+        {
+            res[2 * j] = origin + new Vector2(j, 0);
+            res[2 * j - 1] = origin + new Vector2(-j, 0);
+        }
+        return res;
+    }
+
+    private static int CalculateSize(int size)
+    {
+        int longestSide = 2 * size + 1;
+        int sum = longestSide;
+        for (int i = longestSide - 2; i > 0; i -= 2)
+        {
+            sum += i * 2;
+        }
+        return sum;
+    }
 }

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class FloorCreation : MonoBehaviour
 {
+    public delegate void FinishGeneration();
+    public static FinishGeneration OnFinishGeneration;
+
     [Header("Generation")]
     public GameObject floorSeed;
     public int blockSize;
@@ -12,6 +15,7 @@ public class FloorCreation : MonoBehaviour
     [Header("Tiles")]
     public GameObject perimeterTile;
     public GameObject groundTile;
+    public GameObject decorationTile;
     public GameObject[] obstacles;
     [Header("Population")]
     public GameObject[] enemies;
@@ -66,6 +70,7 @@ public class FloorCreation : MonoBehaviour
         FillCenters();
         FillFloor();
         FillOcean();
+        StartCoroutine(SignalFloorFinished());
     }
 
     // Clears the floor from model and view
@@ -86,11 +91,12 @@ public class FloorCreation : MonoBehaviour
     {
         foreach (Vector2 perimeterPos in TileGroup.perimeterPositions)
         {
+            MapCreation.instance.MarkOnStaticMap(perimeterPos, Settings.instance.wallColor);
             Instantiate(perimeterTile, perimeterPos, Quaternion.identity, transform);
         }
         foreach (Vector2 bodyPos in TileGroup.bodyPositions)
         {
-            StartCoroutine(MyUtilities.DelayedMarkOnStaticMap(bodyPos, Settings.instance.landColor));
+            MapCreation.instance.MarkOnStaticMap(bodyPos, Settings.instance.landColor);
             // body that is not center
             if (!TileGroup.centerPositions.Contains(bodyPos))
             {
@@ -125,7 +131,7 @@ public class FloorCreation : MonoBehaviour
             else
             {
                 // create floor tile
-                Instantiate(groundTile, centerPos, Quaternion.identity, transform);
+                Instantiate(decorationTile, centerPos, Quaternion.identity, transform);
             }
         }
     }
@@ -146,5 +152,12 @@ public class FloorCreation : MonoBehaviour
                 }
             }
         }
+    }
+
+    IEnumerator SignalFloorFinished()
+    {
+        yield return new WaitForEndOfFrame();
+        Debug.Log("Finished Generation");
+        OnFinishGeneration?.Invoke();
     }
 }

@@ -58,7 +58,8 @@ public class LaserBeam : MonoBehaviour
     void UpdateLength()
     {
         //Raycast from the location of the cube forwards
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 1000, (1 << LayerManager.TILE) | (1 << LayerManager.ENEMY));
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 1000, 
+            (1 << LayerManager.TILE) | (1 << LayerManager.ENEMY) | (1 << LayerManager.OCEAN));
         if(hit)
         {
             length = Mathf.Max(1, Mathf.CeilToInt(hit.distance * density + .5f));

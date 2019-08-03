@@ -19,17 +19,25 @@ public class EnemySlash : Enemy
     {
         // stops to get ready to charge
         yield return new WaitForSeconds(chargeTime - .5f);
-        pin.SetActive(true);
-        direction = (target.transform.position - transform.position).normalized;
-        pin.transform.right = direction;
-        stunned = true;
+        try
+        {
+            pin.SetActive(true);
+            direction = (target.transform.position - transform.position).normalized;
+            pin.transform.right = direction;
+            stunned = true;
+        }
+        catch
+        {
+            LoseAggro(true);
+        }
     }
 
     protected override IEnumerator Attack()
     {
         damager.gameObject.SetActive(true);
         float distance = speed * 2;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, (1 << LayerManager.TILE) | (1 << LayerManager.WATER));
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, 
+            (1 << LayerManager.TILE) | (1 << LayerManager.WATER) | (1 << LayerManager.OCEAN));
         Vector2 dest = hit ? hit.point - direction * .5f : (Vector2)transform.position + direction.normalized * distance;
         float time = 0;
         while ((Vector2)transform.position != dest)

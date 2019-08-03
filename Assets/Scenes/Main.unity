@@ -739,6 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53aa183e15085ae4faea140ca844931b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waterAnimationSpeed: 0.5
   DefaultMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   FlashMaterial: {fileID: 2100000, guid: 7a0db4b907d3b3c48adae8f8c8f219c9, type: 2}
   unaggroColor: {r: 0.9716981, g: 0.9716981, b: 0.5087665, a: 1}
@@ -782,6 +783,8 @@ MonoBehaviour:
     type: 3}
   groundTile: {fileID: 6740521992581475487, guid: 9e13c3175e13c4f438ae3ed5ef1ef991,
     type: 3}
+  decorationTile: {fileID: 5815427630730360849, guid: 41c8205f4ea628d4db80208a15b74862,
+    type: 3}
   obstacles:
   - {fileID: 2193024028629927161, guid: 929b2e58b7eba1042b248e9f2616f463, type: 3}
   - {fileID: 5518948065512696910, guid: 3594a1cebc6733c4993c5a2e2abcf587, type: 3}
@@ -820,6 +823,9 @@ MonoBehaviour:
   staticImage: {fileID: 1348474095}
   dynamicImage: {fileID: 550312916}
   fogImage: {fileID: 1312744360}
+  referencePoint: {x: 0, y: 0}
+  bottomReferencePoint: {x: 0, y: 0}
+  middle: {x: 0, y: 0}
 --- !u!1 &500494406
 GameObject:
   m_ObjectHideFlags: 0
@@ -1272,7 +1278,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1312744359
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1725,7 +1731,7 @@ RectTransform:
   m_GameObject: {fileID: 1652647102}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20, y: 20, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 192874782}
   m_Father: {fileID: 1596639186}
@@ -1734,7 +1740,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -50, y: 50}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1652647104
 MonoBehaviour:
@@ -2204,5 +2210,10 @@ PrefabInstance:
       propertyPath: specialImage
       value: 
       objectReference: {fileID: 397597895}
+    - target: {fileID: 8900478317370779705, guid: b2dbf180222863846a99abbf64f59e90,
+        type: 3}
+      propertyPath: field of view
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2dbf180222863846a99abbf64f59e90, type: 3}

@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class Ground : MonoBehaviour
 {
+    public Sprite[] variations;
     public GameObject emptySprite;
     public Sprite[] edges; // 0 1 2
                            // 3   4
                            // 5 6 7
+
+    private void Start()
+    {
+        //int index = (int)(variations.Length * Random.value);
+        //GetComponent<SpriteRenderer>().sprite = variations[index];
+    }
 
     public void AddEdge(Vector2 direction)
     {

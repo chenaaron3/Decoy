@@ -23,16 +23,16 @@ public class Damager : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // ignore if history already contains
-        if(hitHistory != null && hitHistory.Contains(collision.gameObject))
+        if (hitHistory == null || hitHistory.Contains(collision.gameObject))
         {
             return;
         }
 
         // if enemy source
-        if(enemySource)
+        if (enemySource)
         {
             // hitting player
-            if(collision.CompareTag("PlayerHitbox"))
+            if (collision.CompareTag("PlayerHitbox"))
             {
                 collision.GetComponentInParent<PlayerUI>().Health--;
                 hitHistory.Add(collision.gameObject);
@@ -45,10 +45,10 @@ public class Damager : MonoBehaviour
             }
         }
         // if player hitting enemy
-        if(collision.CompareTag("EnemyHitbox") && playerSource)
+        if (collision.CompareTag("EnemyHitbox") && playerSource)
         {
             // spawns effects on enemy if it exists
-            if(effects)
+            if (effects)
             {
                 Destroy(Instantiate(effects, collision.transform.position, Quaternion.identity), 3);
             }

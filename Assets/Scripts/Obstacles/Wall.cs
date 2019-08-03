@@ -2,16 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wall : MonoBehaviour
-{
+public class Wall : MonoBehaviour { 
+    static Vector2[] waterCheckMask;
+
     public Sprite[] wetSprites; // sprites to use near water
     public Sprite[] drySprites; // sprites to use when not near water
 
     private void Start()
     {
-        StartCoroutine(MyUtilities.DelayedMarkOnStaticMap(transform.position, Settings.instance.wallColor));
+        if(waterCheckMask == null)
+        {
+            waterCheckMask = MyUtilities.GetPixelCircle(Vector2.zero, 3);
+        }
+
+        MapCreation.instance.MarkOnStaticMap(transform.position, Settings.instance.wallColor);
         Instantiate(Settings.instance.groundPrefab, transform.position, Quaternion.identity, transform);
-        if(isNearWater())
+        if(IsNearWater())
         {
             int index = (int)(wetSprites.Length * Random.value);
             GetComponent<SpriteRenderer>().sprite = wetSprites[index];
@@ -24,15 +30,17 @@ public class Wall : MonoBehaviour
     }
 
     // if 3 units away from water
-    bool isNearWater()
+    bool IsNearWater()
     {
-        Collider2D[] colliders = new Collider2D[1];
-        ContactFilter2D filter = new ContactFilter2D();
-        LayerMask lm = new LayerMask();
-        lm.value = 1 << LayerManager.WATER;
-        filter.layerMask = lm;
-        // if found anything
-        Physics2D.OverlapCircle(transform.position, 1.5f, filter, colliders);
-        return colliders[0] != null;
+        foreach(Vector2 point in waterCheckMask)
+        {
+            RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + point, Vector2.zero, .1f, 
+                (1 << LayerManager.WATER) | (1 << LayerManager.OCEAN));
+            if(hit)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

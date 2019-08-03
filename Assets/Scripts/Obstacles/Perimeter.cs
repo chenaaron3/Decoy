@@ -10,7 +10,7 @@ public class Perimeter : MonoBehaviour
 
     private void Start()
     {
-        if(isTouchingEmpty())
+        if (isTouchingEmpty())
         {
             Instantiate(Settings.instance.oceanPrefab, transform.position, Quaternion.identity, transform);
         }

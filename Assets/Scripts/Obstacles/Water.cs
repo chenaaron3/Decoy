@@ -7,13 +7,28 @@ public class Water : MonoBehaviour
     Coroutine rippleRoutine;
     GameObject ripple;
 
-    Vector2[] directions = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
+    SpriteRenderer sparkle1;
+    SpriteRenderer sparkle2;
+
+    private Vector2[] directions = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
 
     private void Start()
     {
-        StartCoroutine(MyUtilities.DelayedMarkOnStaticMap(transform.position, Settings.instance.waterColor));
+        MapCreation.instance.MarkOnStaticMap(transform.position, Settings.instance.waterColor);
         ripple = transform.Find("Ripple").gameObject;
-        AffectSurroundingGround();
+        sparkle1 = transform.Find("Sparkle1").GetComponent<SpriteRenderer>();
+        sparkle2 = transform.Find("Sparkle2").GetComponent<SpriteRenderer>();
+        StartCoroutine(Animate());
+    }
+
+    private void OnEnable()
+    {
+        FloorCreation.OnFinishGeneration += AffectSurroundingGround;
+    }
+
+    private void OnDisable()
+    {
+        FloorCreation.OnFinishGeneration -= AffectSurroundingGround;
     }
 
     void AffectSurroundingGround()
@@ -35,6 +50,37 @@ public class Water : MonoBehaviour
         {
             Ripple();
         }
+    }
+
+    IEnumerator Animate()
+    {
+        // 50% flip y
+        if (Random.value > .5f)
+        {
+            // 50% sparkle 1
+            if (Random.value > .5f)
+            {
+                sparkle1.flipX = !sparkle1.flipX;
+            }
+            else
+            {
+                sparkle2.flipX = !sparkle2.flipX;
+            }
+        }
+        else
+        {
+            // 50% sparkle 1
+            if (Random.value > .5f)
+            {
+                sparkle1.flipY = !sparkle1.flipY;
+            }
+            else
+            {
+                sparkle2.flipY = !sparkle2.flipY;
+            }
+        }
+        yield return new WaitForSeconds(Settings.instance.waterAnimationSpeed);
+        StartCoroutine(Animate());
     }
 
     void Ripple()

@@ -9,8 +9,8 @@ public class Bush : MonoBehaviour
 
     private void Start()
     {
+        MapCreation.instance.MarkOnStaticMap(transform.position, Settings.instance.bushColor);
         Instantiate(Settings.instance.groundPrefab, transform.position, Quaternion.identity, transform.parent);
-        StartCoroutine(MyUtilities.DelayedMarkOnStaticMap(transform.position, Settings.instance.bushColor));
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

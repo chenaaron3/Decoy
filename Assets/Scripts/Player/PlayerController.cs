@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public static float range;
+    public static float range = 5;
     public delegate void Stealth();
     public static Stealth OnStealth;
     public delegate void Reveal();
@@ -64,7 +64,8 @@ public class PlayerController : MonoBehaviour
         // for translation
         Vector2 inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
         movingDirection = inputDirection.magnitude == 0 ? movingDirection : inputDirection;
-        RaycastHit2D moveHit = Physics2D.Raycast(transform.position, movingDirection, size / 2, 1 << LayerManager.TILE | 1 << LayerManager.WATER);
+        RaycastHit2D moveHit = Physics2D.Raycast(transform.position, movingDirection, size / 2, 
+            (1 << LayerManager.TILE) | (1 << LayerManager.WATER) | (1 << LayerManager.OCEAN));
         if (!moveHit && inputDirection != Vector2.zero)
         {
             transform.position += (Vector3)inputDirection * speed * Time.deltaTime;
@@ -156,7 +157,8 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(FadeInTrailRenderer());
         stunned = true;
         col.isTrigger = true;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, 1 << LayerManager.TILE);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, distance, 
+            (1 << LayerManager.TILE) | (1 << LayerManager.OCEAN));
         Vector2 dest = transform.position;
         if (hit)
         {

@@ -76,7 +76,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 230833903}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92a9331b499635546a81b14cd42b781d, type: 3}
+  m_Script: {fileID: 11500000, guid: cec04e890573afa42802a3dcbebbb642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   effects: {fileID: 7767239985489969115, guid: ea4d11e52bf1fef4b8176ca86a70dfec, type: 3}
@@ -4917,7 +4917,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 600527873}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92a9331b499635546a81b14cd42b781d, type: 3}
+  m_Script: {fileID: 11500000, guid: cec04e890573afa42802a3dcbebbb642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   effects: {fileID: 7767239985489969115, guid: ea4d11e52bf1fef4b8176ca86a70dfec, type: 3}
@@ -19358,7 +19358,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 941546394}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92a9331b499635546a81b14cd42b781d, type: 3}
+  m_Script: {fileID: 11500000, guid: cec04e890573afa42802a3dcbebbb642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   effects: {fileID: 7767239985489969115, guid: ea4d11e52bf1fef4b8176ca86a70dfec, type: 3}
@@ -34126,6 +34126,7 @@ MonoBehaviour:
   speed: 3
   cloneDuration: 1.5
   dashDistance: 1
+  stealthed: 0
 --- !u!50 &8900478316911733330
 Rigidbody2D:
   serializedVersion: 4

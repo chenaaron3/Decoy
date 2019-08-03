@@ -6,6 +6,8 @@ public class Settings : MonoBehaviour
 {
     public static Settings instance;
 
+    public float waterAnimationSpeed;
+
     [Header("Shader")]
     public Material DefaultMaterial;
     public Material FlashMaterial;

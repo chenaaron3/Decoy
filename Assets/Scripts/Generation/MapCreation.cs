@@ -30,6 +30,10 @@ public class MapCreation : MonoBehaviour
     // used to translate world position to array coordinates
     public Vector2Int referencePoint;
     public Vector2Int bottomReferencePoint;
+    public Vector2Int middle;
+
+    // player specific
+    Vector2[] fogMask;
 
     //(0, 0)
     //+--------------+
@@ -46,6 +50,7 @@ public class MapCreation : MonoBehaviour
     // called from floor generation
     public void CreateMap()
     {
+        fogMask = MyUtilities.GetPixelCircle(Vector2.zero, (int)(PlayerController.range));
         markings = new Dictionary<GameObject, Vector2Int>();
         InitializeMaps();
         ConfigureTextures();
@@ -67,6 +72,7 @@ public class MapCreation : MonoBehaviour
         // sets reference point (top left and corner margin)
         referencePoint = new Vector2Int((int)(topLeft.x - windowSize.x / 2), (int)(topLeft.y + windowSize.y / 2));
         bottomReferencePoint = new Vector2Int((int)(referencePoint.x + mapSize.x), (int)(referencePoint.y - mapSize.y));
+        middle = new Vector2Int((referencePoint.x + bottomReferencePoint.x) / 2, (referencePoint.y + bottomReferencePoint.y) / 2);
     }
 
     // initializes the values for the arrays
@@ -87,9 +93,9 @@ public class MapCreation : MonoBehaviour
     void ConfigureTextures()
     {
         // initializes textures
-        staticTexture = new Texture2D(windowSize.x, windowSize.y);
-        dynamicTexture = new Texture2D(windowSize.x, windowSize.y);
-        fogTexture = new Texture2D(windowSize.x, windowSize.y);
+        staticTexture = new Texture2D(windowSize.x, windowSize.y, TextureFormat.RGBA32, false);
+        dynamicTexture = new Texture2D(windowSize.x, windowSize.y, TextureFormat.RGBA32, false);
+        fogTexture = new Texture2D(windowSize.x, windowSize.y, TextureFormat.RGBA32, false);
         staticTexture.filterMode = FilterMode.Point;
         dynamicTexture.filterMode = FilterMode.Point;
         fogTexture.filterMode = FilterMode.Point;
@@ -102,6 +108,7 @@ public class MapCreation : MonoBehaviour
     public void UpdateMapTextures(GameObject player)
     {
         MarkOnDynamicMap(player, Settings.instance.playerColor);
+        ClearFog(player.transform.position);
         // (col, row) of player
         Vector2Int playerCoordinate = WorldToMap(player.transform.position);
         // (col, row) of window corner
@@ -115,13 +122,22 @@ public class MapCreation : MonoBehaviour
                 // assigns map's snippet into the texture
                 staticTexture.SetPixel(col, row, staticMap[windowCorner.x + col, windowCorner.y + row]);
                 dynamicTexture.SetPixel(col, row, dynamicMap[windowCorner.x + col, windowCorner.y + row]);
-                fogTexture.SetPixel(col, row, fogMap[windowCorner.x + col, windowCorner.y + row] ? Settings.instance.fogColor : Color.clear);
+                fogTexture.SetPixel(col, row, fogMap[windowCorner.x + col, windowCorner.y + row] ? Color.clear : Settings.instance.fogColor);
             }
         }
         // applies pixels to texture
         staticTexture.Apply();
         dynamicTexture.Apply();
         fogTexture.Apply();
+    }
+
+    void ClearFog(Vector2 position)
+    {
+        foreach(Vector2 fogPixel in fogMask)
+        {
+            Vector2Int mapPixel = WorldToMap(position + fogPixel);
+            fogMap[mapPixel.x, mapPixel.y] = true;
+        }
     }
 
     // makes a marking on the static map
