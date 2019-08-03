@@ -8,6 +8,7 @@ public class Damager : MonoBehaviour
     HashSet<GameObject> hitHistory; // prevents buggy multi hits
     public bool playerSource; // if attack from player
     public bool enemySource; // if attack from enemy
+    public bool destroyOnHit;
 
 
     private void Start()
@@ -28,6 +29,8 @@ public class Damager : MonoBehaviour
             return;
         }
 
+        bool hit = false;
+
         // if enemy source
         if (enemySource)
         {
@@ -36,12 +39,14 @@ public class Damager : MonoBehaviour
             {
                 collision.GetComponentInParent<PlayerUI>().Health--;
                 hitHistory.Add(collision.gameObject);
+                hit = true;
             }
             // hitting clone
             if (collision.CompareTag("Clone"))
             {
                 collision.GetComponent<Clone>().TakeHit(gameObject);
                 hitHistory.Add(collision.gameObject);
+                hit = true;
             }
         }
         // if player hitting enemy
@@ -58,6 +63,12 @@ public class Damager : MonoBehaviour
             float minInverseDisp = 1 / PlayerController.range;
             float power = MyUtilities.Remap(Mathf.Max(inverseDisplacement, minInverseDisp), minInverseDisp, 1, 3, 15);
             collision.GetComponentInParent<Enemy>().TakeDamage(displacement.normalized, power);
+            hit = true;
+        }
+
+        if(hit && destroyOnHit)
+        {
+            Destroy(gameObject);
         }
     }
 }

@@ -790,9 +790,10 @@ MonoBehaviour:
   - {fileID: 5518948065512696910, guid: 3594a1cebc6733c4993c5a2e2abcf587, type: 3}
   - {fileID: 8364480636473348942, guid: da01cd67cfac29144aa7b4cc0731e26c, type: 3}
   enemies:
-  - {fileID: 6791699942615437790, guid: 0254829afcacf6140b56e8dd4ee5679c, type: 3}
+  - {fileID: 2371434699390823166, guid: 12604258cb890a24d995d037aac9d1ce, type: 3}
   - {fileID: 5574889317016840795, guid: b44f49ec5c1f7844daf8b6a27afeaf0d, type: 3}
-  enemyRate: 0.2
+  - {fileID: 6791699942615437790, guid: 0254829afcacf6140b56e8dd4ee5679c, type: 3}
+  enemyRate: 0.15
   obstacleRate: 0.25
 --- !u!4 &478509266
 Transform:

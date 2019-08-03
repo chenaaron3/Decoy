@@ -9,8 +9,8 @@ public abstract class Enemy : MonoBehaviour
     protected SpriteRenderer sr; // sprite renderer on graphics
     protected Rigidbody2D rb; // dynamic rigid body
     public Image healthImage; // health UI
-    public Collider2D attackCollider; // trigger that detects when to attack
-    public Collider2D aggroCollider; // trigger that detects when to aggro
+    public CircleCollider2D attackCollider; // trigger that detects when to attack
+    public CircleCollider2D aggroCollider; // trigger that detects when to aggro
 
     // stats
     public float chargeTime; // time to charge
@@ -25,11 +25,11 @@ public abstract class Enemy : MonoBehaviour
     protected bool stunned; // cannot move if stunned
     protected bool attacking; // prevents double attacking
     protected GameObject target; // player target
-        // keep track of routines to prevent overlapping
+                                 // keep track of routines to prevent overlapping
     Coroutine colorChangeRoutine;
     Coroutine bulgeRoutine;
     Coroutine knockBackRoutine;
-        // deals with HP changes
+    // deals with HP changes
     float health;
     public float Health
     {
@@ -39,7 +39,7 @@ public abstract class Enemy : MonoBehaviour
         }
         set
         {
-            if(value <= 0)
+            if (value <= 0)
             {
                 health = 0;
                 Die();
@@ -102,7 +102,7 @@ public abstract class Enemy : MonoBehaviour
             MapCreation.instance.MarkOnDynamicMap(gameObject, Settings.instance.enemyColor);
             transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
             resenseCount++;
-            if(resenseCount % resensePer == 0)
+            if (resenseCount % resensePer == 0)
             {
                 rb.velocity = Vector2.zero;
                 CheckAttackSense();
@@ -116,7 +116,7 @@ public abstract class Enemy : MonoBehaviour
     public void GainAggro(GameObject target)
     {
         // if player stealthed
-        if(target.CompareTag("Player") && target.GetComponent<PlayerController>().stealthed)
+        if (target.CompareTag("Player") && target.GetComponent<PlayerController>().stealthed)
         {
             return;
         }
@@ -135,7 +135,7 @@ public abstract class Enemy : MonoBehaviour
     public void LoseAggro(bool force = false)
     {
         // if player leaves and not dead
-        if(force || (target != null && target.CompareTag("Player") && Health > 0))
+        if (force || (target != null && target.CompareTag("Player") && Health > 0))
         {
             Reset();
             Bulge();
@@ -149,40 +149,54 @@ public abstract class Enemy : MonoBehaviour
     // Starts attack if not already attacking
     public void ChargeCall()
     {
-        // start attack phase if not already attacking
-        if (!attacking && !stunned)
+        try
         {
-            attacking = true;
-            StartCoroutine(Charge());
-            // changes color from aggro to attack
-            ColorChange(Settings.instance.attackColor, chargeTime);
-            Bulge(chargeTime - .5f);
-            Invoke("AttackCall", chargeTime);
+            // start attack phase if not already attacking
+            if (!attacking && !stunned)
+            {
+                attacking = true;
+                StartCoroutine(Charge());
+                // changes color from aggro to attack
+                ColorChange(Settings.instance.attackColor, chargeTime);
+                Bulge(chargeTime - .5f);
+                Invoke("AttackCall", chargeTime);
+            }
+        }
+        catch
+        {
+            LoseAggro(true);
         }
     }
 
     // Attack Phase
     void AttackCall()
     {
-        if(target == null)
-        {
-            LoseAggro(true);
-        }
-        else
+        try
         {
             StartCoroutine(Attack());
             Invoke("RechargeCall", attackTime);
+        }
+        catch
+        {
+            LoseAggro(true);
         }
     }
 
     // Recharge Phase
     void RechargeCall()
     {
-        StartCoroutine(Recharge());
-        // changes color from attack to aggro
-        ColorChange(Settings.instance.aggroColor, rechargeTime);
-        Bulge(rechargeTime);
-        Invoke("CheckAttackSense", rechargeTime);
+        try
+        {
+            StartCoroutine(Recharge());
+            // changes color from attack to aggro
+            ColorChange(Settings.instance.aggroColor, rechargeTime);
+            Bulge(rechargeTime);
+            Invoke("CheckAttackSense", rechargeTime);
+        }
+        catch
+        {
+            LoseAggro(true);
+        }
     }
 
     // Manages Color Changes
@@ -228,9 +242,9 @@ public abstract class Enemy : MonoBehaviour
     void KnockBack(Vector2 direction, float power)
     {
         // only knock back if alive and not already knocking back
-        if(knockBackRoutine == null)
+        if (knockBackRoutine == null)
         {
-            if(Health > 0)
+            if (Health > 0)
             {
                 knockBackRoutine = StartCoroutine(KnockBackRoutine(direction, power));
             }
@@ -311,6 +325,7 @@ public abstract class Enemy : MonoBehaviour
 
     void CheckAttackSense()
     {
+        Debug.Log("Resensing");
         attackCollider.enabled = false;
         attackCollider.enabled = true;
     }
