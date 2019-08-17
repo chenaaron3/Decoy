@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
     // components
     public GameObject clonePrefab;
+    public FixedJoystick joystick;
     Animator weaponAnim;
     [HideInInspector]
     public PlayerUI myUI;
@@ -63,6 +64,7 @@ public class PlayerController : MonoBehaviour
 
         // for translation
         Vector2 inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        inputDirection = new Vector2(joystick.Horizontal, joystick.Vertical).normalized;
         movingDirection = inputDirection.magnitude == 0 ? movingDirection : inputDirection;
         RaycastHit2D moveHit = Physics2D.Raycast(transform.position, movingDirection, size / 2, 
             (1 << LayerManager.TILE) | (1 << LayerManager.WATER) | (1 << LayerManager.OCEAN));
@@ -93,11 +95,12 @@ public class PlayerController : MonoBehaviour
     }
 
     // Triggers Ranged Attack
-    void RangedAttack()
+    public void RangedAttack()
     {
         // Regular
         if (myUI.RangedStacks > 0)
         {
+            AudioManager.instance.PlaySound("zap");
             ExitStealth();
             weaponAnim.SetTrigger("RangedAttack");
             myUI.RangedStacks--;
@@ -111,11 +114,12 @@ public class PlayerController : MonoBehaviour
     }
 
     // Triggers Melee Attack
-    void MeleeAttack()
+    public void MeleeAttack()
     {
         // Regular
         if (myUI.MeleeStacks > 0)
         {
+            AudioManager.instance.PlaySound("hit");
             ExitStealth();
             weaponAnim.SetTrigger("MeleeAttack");
             myUI.MeleeStacks--;
@@ -137,8 +141,9 @@ public class PlayerController : MonoBehaviour
     }
 
     // Instantiates a clone that dies after a duration
-    void Clone()
+    public void Clone()
     {
+        AudioManager.instance.PlaySound("dash");
         Clone c = Instantiate(clonePrefab, transform.position, Quaternion.identity).GetComponent<Clone>();
         c.owner = this;
         Dash(movingDirection);
@@ -247,6 +252,7 @@ public class PlayerController : MonoBehaviour
     // go into stealth
     public void EnterStealth()
     {
+        AudioManager.instance.PlaySound("invis");
         OnStealth?.Invoke();
         stealthed = true;
     }

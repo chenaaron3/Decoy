@@ -310,6 +310,7 @@ public abstract class Enemy : MonoBehaviour
     // takes damage and applies knock back
     public void TakeDamage(Vector2 direction, float power)
     {
+        AudioManager.instance.PlaySound("bounce");
         Reset();
         ColorChange(Settings.instance.unaggroColor, 0f);
         Health--;

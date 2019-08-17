@@ -34,6 +34,7 @@ public class MapCreation : MonoBehaviour
 
     // player specific
     Vector2[] fogMask;
+    bool refresh;
 
     //(0, 0)
     //+--------------+
@@ -45,6 +46,11 @@ public class MapCreation : MonoBehaviour
     private void Awake()
     {
         instance = this;
+    }
+
+    private void Start()
+    {
+        refresh = true;
     }
 
     // called from floor generation
@@ -108,35 +114,30 @@ public class MapCreation : MonoBehaviour
     public void UpdateMapTextures(GameObject player)
     {
         MarkOnDynamicMap(player, Settings.instance.playerColor);
-        ClearFog(player.transform.position);
-        // (col, row) of player
-        Vector2Int playerCoordinate = WorldToMap(player.transform.position);
-        // (col, row) of window corner
-        Vector2Int windowCorner = new Vector2Int(playerCoordinate.x - windowSize.x / 2, playerCoordinate.y - windowSize.y / 2);
-
-        // creates the texture window
-        for (int row = 0; row < windowSize.y; row++)
+        ClearFog(player);
+        if (refresh)
         {
-            for (int col = 0; col < windowSize.x; col++)
+            // (col, row) of player
+            Vector2Int playerCoordinate = WorldToMap(player.transform.position);
+            // (col, row) of window corner
+            Vector2Int windowCorner = new Vector2Int(playerCoordinate.x - windowSize.x / 2, playerCoordinate.y - windowSize.y / 2);
+            // creates the texture window
+            for (int row = 0; row < windowSize.y; row++)
             {
-                // assigns map's snippet into the texture
-                staticTexture.SetPixel(col, row, staticMap[windowCorner.x + col, windowCorner.y + row]);
-                dynamicTexture.SetPixel(col, row, dynamicMap[windowCorner.x + col, windowCorner.y + row]);
-                fogTexture.SetPixel(col, row, fogMap[windowCorner.x + col, windowCorner.y + row] ? Color.clear : Settings.instance.fogColor);
+                for (int col = 0; col < windowSize.x; col++)
+                {
+                    // assigns map's snippet into the texture
+                    staticTexture.SetPixel(col, row, staticMap[windowCorner.x + col, windowCorner.y + row]);
+                    dynamicTexture.SetPixel(col, row, dynamicMap[windowCorner.x + col, windowCorner.y + row]);
+                    fogTexture.SetPixel(col, row, fogMap[windowCorner.x + col, windowCorner.y + row] ? Color.clear : Settings.instance.fogColor);
+                }
             }
-        }
-        // applies pixels to texture
-        staticTexture.Apply();
-        dynamicTexture.Apply();
-        fogTexture.Apply();
-    }
-
-    void ClearFog(Vector2 position)
-    {
-        foreach(Vector2 fogPixel in fogMask)
-        {
-            Vector2Int mapPixel = WorldToMap(position + fogPixel);
-            fogMap[mapPixel.x, mapPixel.y] = true;
+            // applies pixels to texture
+            staticTexture.Apply();
+            dynamicTexture.Apply();
+            fogTexture.Apply();
+            // already refreshed
+            refresh = false;
         }
     }
 
@@ -155,6 +156,11 @@ public class MapCreation : MonoBehaviour
         if (markings.ContainsKey(obj))
         {
             Vector2Int previousMarking = markings[obj];
+            // if didnt move, do nothing
+            if (previousMarking == coordinate)
+            {
+                return;
+            }
             dynamicMap[previousMarking.x, previousMarking.y] = Color.clear;
         }
         // if first time marking for this object
@@ -165,6 +171,22 @@ public class MapCreation : MonoBehaviour
         // records marking
         markings[obj] = coordinate;
         dynamicMap[coordinate.x, coordinate.y] = color;
+        refresh = true;
+    }
+
+    // updates the fog layer
+    void ClearFog(GameObject player)
+    {
+        Vector2 playerPosition = (Vector2)player.transform.position;
+        // if player moved
+        if (markings[player] != playerPosition)
+        {
+            foreach (Vector2 fogPixel in fogMask)
+            {
+                Vector2Int mapPixel = WorldToMap(playerPosition + fogPixel);
+                fogMap[mapPixel.x, mapPixel.y] = true;
+            }
+        }
     }
 
     public void RemoveMarkingTracker(GameObject obj)

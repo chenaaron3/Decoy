@@ -8,6 +8,8 @@ public class Ocean : MonoBehaviour
     SpriteRenderer sparkle1;
     SpriteRenderer sparkle2;
     Coroutine bulgeRoutine;
+    int animationMod;
+
 
     private void OnEnable()
     {
@@ -44,9 +46,13 @@ public class Ocean : MonoBehaviour
         float rand = Random.value * Settings.instance.waterAnimationSpeed;
         yield return new WaitForSeconds(rand);
         StartCoroutine(Animate());
+        // distance from middle to corner
+        float maxDistance = (MapCreation.instance.referencePoint - MapCreation.instance.middle).magnitude;
+        float distance = ((Vector2)transform.position - MapCreation.instance.middle).magnitude;
         yield return new WaitForSeconds(Settings.instance.waterAnimationSpeed - rand);
+        yield return new WaitForSeconds((maxDistance - distance) / 10);
                                        //thickness                                                                    interval
-        yield return new WaitForSeconds( 1 / (((Vector2)transform.position - MapCreation.instance.middle).magnitude % 30 / 30.0f));
+        //yield return new WaitForSeconds( 1 / (distance % 30 / 30.0f));
         StartCoroutine(Wave());
     }
 
@@ -64,31 +70,50 @@ public class Ocean : MonoBehaviour
 
     IEnumerator Animate()
     {
-        // 50% flip y
-        if (Random.value > .5f)
+        animationMod++;
+        animationMod %= 4;
+        switch (animationMod)
         {
-            // 50% sparkle 1
-            if (Random.value > .5f)
-            {
+            case 0:
                 sparkle1.flipX = !sparkle1.flipX;
-            }
-            else
-            {
+                break;
+            case 1:
                 sparkle2.flipX = !sparkle2.flipX;
-            }
-        }
-        else
-        {
-            // 50% sparkle 1
-            if (Random.value > .5f)
-            {
+                break;
+            case 2:
                 sparkle1.flipY = !sparkle1.flipY;
-            }
-            else
-            {
+                break;
+            case 3:
                 sparkle2.flipY = !sparkle2.flipY;
-            }
+                break;
         }
+
+
+        //// 50% flip y
+        //if (Random.value > .5f)
+        //{
+        //    // 50% sparkle 1
+        //    if (Random.value > .5f)
+        //    {
+        //        sparkle1.flipX = !sparkle1.flipX;
+        //    }
+        //    else
+        //    {
+        //        sparkle2.flipX = !sparkle2.flipX;
+        //    }
+        //}
+        //else
+        //{
+        //    // 50% sparkle 1
+        //    if (Random.value > .5f)
+        //    {
+        //        sparkle1.flipY = !sparkle1.flipY;
+        //    }
+        //    else
+        //    {
+        //        sparkle2.flipY = !sparkle2.flipY;
+        //    }
+        //}
         yield return new WaitForSeconds(Settings.instance.waterAnimationSpeed);
         StartCoroutine(Animate());
     }
